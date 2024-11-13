@@ -1,0 +1,43 @@
+# Global exclusions for BarberWeb
+
+# Exclude all necessary files and directories for the BarberBackend project
+
+HELP.md
+/barberbackend/barber/.gradle
+/barberbackend/barber/build/
+!/barberbackend/barber/gradle/wrapper/gradle-wrapper.jar
+!/barberbackend/barber/**/src/main/**/build/
+/barberbackend/barber/**/src/test/**/build/
+
+### STS ###
+/barberbackend/barber/.apt_generated
+/barberbackend/barber/.classpath
+/barberbackend/barber/.factorypath
+/barberbackend/barber/.project
+/barberbackend/barber/.settings
+/barberbackend/barber/.springBeans
+/barberbackend/barber/.sts4-cache
+/barberbackend/barber/bin/
+!/barberbackend/barber/**/src/main/**/bin/
+!/barberbackend/barber/**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+/barberbackend/barber/.idea
+/barberbackend/barber/*.iws
+/barberbackend/barber/*.iml
+/barberbackend/barber/*.ipr
+/barberbackend/barber/out/
+!/barberbackend/barber/**/src/main/**/out/
+!/barberbackend/barber/**/src/test/**/out/
+
+### NetBeans ###
+/barberbackend/barber/nbproject/private/
+/barberbackend/barber/nbbuild/
+/barberbackend/barber/dist/
+/barberbackend/barber/nbdist/
+/barberbackend/barber/.nb-gradle/
+
+### VS Code ###
+/barberbackend/barber/.vscode/
+
+# Additional global exclusions for BarberWeb can be added here
