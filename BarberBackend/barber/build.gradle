@@ -31,6 +31,14 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+// NOTE: The following dependencies were automatically added by the [Gradle Plus] extension.
+// Please review them to ensure they match your project's requirements.
+	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+
+// NOTE: The following dependencies were automatically added by the [Gradle Plus] extension.
+// Please review them to ensure they match your project's requirements.
+	runtimeOnly 'com.mysql:mysql-connector-j'
 }
 
 tasks.named('test') {
