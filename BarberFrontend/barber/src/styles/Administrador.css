@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+  color: black;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.00938em;
+  background-color: black !important;
+}
+
+.css-1je49cu-MuiTypography-root {
+    color: red !important;
+}
+ 
+ .css-mk1z4a-MuiButtonBase-root-MuiListItemButton-root.Mui-selected {
+    background-color: #ff000022 !important;
+  }
+  
+  
+.css-mk1z4a-MuiButtonBase-root-MuiListItemButton-root.Mui-selected:hover {
+    background-color: #ff000022 !important;
+  }
+
+.css-mk1z4a-MuiButtonBase-root-MuiListItemButton-root.Mui-selected .MuiSvgIcon-root {
+    color: #ff000022 !important;
+   }
+
+.css-1ie2bpi-MuiButtonBase-root-MuiIconButton-root{
+color: red !important;
+}

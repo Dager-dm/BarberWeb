@@ -41,3 +41,31 @@ HELP.md
 /barberbackend/barber/.vscode/
 
 # Additional global exclusions for BarberWeb can be added here
+
+### Global exclusions for BarberWeb
+### Exclude all necessary files and directories for the BarberBackend project
+
+### Exclude all necessary files and directories for the BarberFrontend project
+logs
+/barberfrontend/barber/.log
+/barberfrontend/barber/npm-debug.log
+/barberfrontend/barber/yarn-debug.log*
+/barberfrontend/barber/yarn-error.log*
+/barberfrontend/barber/pnpm-debug.log*
+/barberfrontend/barber/lerna-debug.log*
+
+/barberfrontend/barber/node_modules
+/barberfrontend/barber/dist
+/barberfrontend/barber/dist-ssr
+/barberfrontend/barber/.local
+
+### Editor directories and files
+/barberfrontend/barber/.vscode/
+/barberfrontend/barber/.vscode/extensions.json
+/barberfrontend/barber/.idea
+/barberfrontend/barber/.DS_Store
+/barberfrontend/barber/.suo
+/barberfrontend/barber/.ntvs
+/barberfrontend/barber/.njsproj
+/barberfrontend/barber/.sln
+/barberfrontend/barber/.sw?
