@@ -11,7 +11,9 @@ import GroupIcon from '@mui/icons-material/Group';
 import GroupsIcon from '@mui/icons-material/Groups';
 import Grid from "@mui/material/Grid2";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import ServicesTable from "../components/Table.jsx";
+import ServicesTable from "../components/CrudAdmin/ServiceCrud.jsx";
+import EmployeesTable from "../components/CrudAdmin/EmployeesCrud.jsx";
+import ClientsTables from "../components/CrudAdmin/ClientsCrud.jsx";
 import "../styles/Administrador.css";
 
 const NAVIGATION = [
@@ -36,8 +38,8 @@ const NAVIGATION = [
     icon: <ContentCutIcon />,
   },
   {
-    segment: "Arqueo de Caja",
-    title: "Arqueo de Caja",
+    segment: "Caja",
+    title: "Caja",
     icon: <AttachMoneyIcon />,
     children: [
       {
@@ -51,8 +53,8 @@ const NAVIGATION = [
         icon: <DescriptionIcon />,
       },
       {
-        segment: "Iniciar Arqueo",
-        title: "Iniciar Arqueo",
+        segment: "Arqueo de Caja",
+        title: "Arqueo de Caja",
         icon: <DescriptionIcon />,
       },
     ],
@@ -117,13 +119,19 @@ export default function DashboardLayoutBasic(props) {
 
   const demoWindow = window ? window() : undefined;
 
-  // Función para renderizar contenido dinámico basado en la ruta
   const renderContent = () => {
-    if (router.pathname === "/Servicios") {
-      return <ServicesTable />; // Renderiza la tabla en la sección Servicios
+    if (router.pathname === "/Servicios" ) {
+      return <ServicesTable />; 
+    }
+    if (router.pathname === "/Empleados" ) {
+      return <EmployeesTable />; 
+    }
+    if (router.pathname === "/Clientes" ) {
+      return <ClientsTables />; 
     }
 
-    // Renderiza el contenido actual (Skeleton) para otras rutas
+
+    
     return (
       <Grid container spacing={1}>
         <Grid size={5} />

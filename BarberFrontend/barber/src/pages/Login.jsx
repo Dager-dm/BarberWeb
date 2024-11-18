@@ -1,8 +1,6 @@
 import '../styles/Login.css';
 import React, { useState } from 'react';
 
-
-
 function Login() {
     
     const [isActive, setIsActive] = useState(false);
