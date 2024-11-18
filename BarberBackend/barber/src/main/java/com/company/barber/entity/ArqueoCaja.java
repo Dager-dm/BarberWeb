@@ -2,6 +2,8 @@ package com.company.barber.entity;
 
 import java.util.Date;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,6 +32,8 @@ public class ArqueoCaja {
     private Long SaldoReal;
     private Long Diferencia;
     private String Observacion;
+    @Enumerated(EnumType.STRING)
+    private EstadoCrud estado;
     @ManyToOne
     @JoinColumn(name = "id_cajero")
     private Cajero cajero;
@@ -40,5 +44,7 @@ public class ArqueoCaja {
     @OneToMany(mappedBy = "id")
     private List<Corte> cortes;
 
+
+   
 
 }
