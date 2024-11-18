@@ -71,8 +71,55 @@ const BRANDING = {
 export default function DashboardLayoutBasic(props) {
   const { window } = props;
 
-  const router = useDemoRouter('/dashboard');
+  const router = useDemoRouter("/dashboard");
+
   const demoWindow = window ? window() : undefined;
+
+  const renderContent = () => {
+    if (router.pathname === "/Citas" ) {
+      return <CitasCliente />; 
+    }
+  
+
+    
+    return (
+      <Grid container spacing={1}>
+        <Grid size={5} />
+        <Grid size={12}>
+          <Skeleton height={14} />
+        </Grid>
+        <Grid size={12}>
+          <Skeleton height={14} />
+        </Grid>
+        <Grid size={4}>
+          <Skeleton height={100} />
+        </Grid>
+        <Grid size={8}>
+          <Skeleton height={100} />
+        </Grid>
+
+        <Grid size={12}>
+          <Skeleton height={150} />
+        </Grid>
+        <Grid size={12}>
+          <Skeleton height={14} />
+        </Grid>
+
+        <Grid size={3}>
+          <Skeleton height={100} />
+        </Grid>
+        <Grid size={3}>
+          <Skeleton height={100} />
+        </Grid>
+        <Grid size={3}>
+          <Skeleton height={100} />
+        </Grid>
+        <Grid size={3}>
+          <Skeleton height={100} />
+        </Grid>
+      </Grid>
+    );
+  };
 
   return (
     <AppProvider
@@ -83,43 +130,7 @@ export default function DashboardLayoutBasic(props) {
       window={demoWindow}
     >
       <DashboardLayout>
-        <PageContainer>
-          <Grid container spacing={1}>
-            <Grid xs={12}>
-          {/* Renderizar el componente CitasCliente solo si la ruta es /Citas */}
-          {router.pathname === '/Citas' && <CitasCliente />}
-            </Grid>
-            <Grid xs={12}>
-              <Skeleton height={14} />
-            </Grid>
-            <Grid xs={4}>
-              <Skeleton height={100} />
-            </Grid>
-            <Grid xs={8}>
-              <Skeleton height={100} />
-            </Grid>
-
-            <Grid xs={12}>
-              <Skeleton height={150} />
-            </Grid>
-            <Grid xs={12}>
-              <Skeleton height={14} />
-            </Grid>
-
-            <Grid xs={3}>
-              <Skeleton height={100} />
-            </Grid>
-            <Grid xs={3}>
-              <Skeleton height={100} />
-            </Grid>
-            <Grid xs={3}>
-              <Skeleton height={100} />
-            </Grid>
-            <Grid xs={3}>
-              <Skeleton height={100} />
-            </Grid>
-          </Grid>
-        </PageContainer>
+        <PageContainer>{renderContent()}</PageContainer>
       </DashboardLayout>
     </AppProvider>
   );
