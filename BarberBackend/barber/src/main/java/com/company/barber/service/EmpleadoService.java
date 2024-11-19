@@ -21,7 +21,7 @@ public class EmpleadoService implements ICrud<Empleado> {
 
     @Override
     public List<Empleado> GetAll() {
-        return (List<Empleado>) empleadorepository.findAll();
+        return (List<Empleado>) empleadorepository.findByEstado(EstadoCrud.Habilitado);
     }
 
     @Override

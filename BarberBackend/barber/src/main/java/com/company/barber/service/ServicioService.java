@@ -21,7 +21,7 @@ public class ServicioService implements ICrud<Servicio> {
 
     @Override
     public List<Servicio> GetAll() {
-        return (List<Servicio>) serviciorepository.findAll();
+        return (List<Servicio>) serviciorepository.findByEstado(EstadoCrud.Habilitado);
     }
 
     @Override

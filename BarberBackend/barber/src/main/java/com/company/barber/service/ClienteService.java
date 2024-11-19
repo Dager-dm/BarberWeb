@@ -21,7 +21,7 @@ public class ClienteService implements ICrud<Cliente> {
 
     @Override
     public List<Cliente> GetAll() {
-        return (List<Cliente>) clienterepository.findAll();
+        return (List<Cliente>) clienterepository.findByEstado(EstadoCrud.Habilitado);
     }
 
     @Override
@@ -52,6 +52,17 @@ public class ClienteService implements ICrud<Cliente> {
     @Override
     public Cliente GetById(Long id) throws Exception {
         return clienterepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Este servicio no está registrado " + id));
+    }
+
+    public String SetCitas(Cliente cliente){
+        try {
+            Cliente c = this.GetById(cliente.getId());
+            c.setCitas(cliente.getCitas());
+            clienterepository.save(c);
+            return "Cita guardada correctamente";
+        } catch (Exception e) {
+           return "Ocurrió un error al guardar la cita :"+e.getMessage();
+        }
     }
 
 }

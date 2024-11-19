@@ -23,7 +23,7 @@ public class CajeroService implements ICrud<Cajero> {
 
     @Override
     public List<Cajero> GetAll() {
-        return (List<Cajero>) cajerorepository.findAll();
+        return (List<Cajero>) cajerorepository.findByEstado(EstadoCrud.Habilitado);
     }
 
     @Override
@@ -54,5 +54,7 @@ public class CajeroService implements ICrud<Cajero> {
     public Cajero GetById(Long id) throws Exception {
        return cajerorepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Este Cajero no está registrado " + id));
     }
+
+
 
 }
