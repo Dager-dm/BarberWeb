@@ -14,138 +14,158 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  Box,
+  useTheme,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { styled } from "@mui/system";
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  background: theme.palette.mode === "dark"
+    ? "linear-gradient(to right, #6a11cb, #2575fc)"
+    : "linear-gradient(to right, #2575fc, #6a11cb)",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  "&:hover": {
+    background: theme.palette.mode === "dark"
+      ? "linear-gradient(to right, #5a0dba, #1f60d0)"
+      : "linear-gradient(to right, #1f60d0, #5a0dba)",
+  },
+}));
+
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiDialog-paper": {
+    borderRadius: "20px",
+    padding: theme.spacing(3),
+    background: theme.palette.mode === "dark"
+      ? "linear-gradient(to right, #1e1e1e, #252525)"
+      : "linear-gradient(to right, #ffffff, #f7f9fc)",
+    boxShadow: theme.palette.mode === "dark"
+      ? "0px 4px 20px rgba(255, 255, 255, 0.1)"
+      : "0px 4px 20px rgba(0, 0, 0, 0.1)",
+  },
+}));
 
 function EmployeesCrud() {
+  const theme = useTheme(); // Detectar el tema actual
+
   const [rows, setRows] = React.useState([
-    { id: 1, cedula: "1234567890", nombre: "Juan", apellido: "Pérez", telefono: "123-456-7890", estado: "Activo", cuenta_id: "A1", cargo: "Barbero" },
-    { id: 2, cedula: "0987654321", nombre: "Ana", apellido: "López", telefono: "987-654-3210", estado: "Activo", cuenta_id: "A2", cargo: "Recepcionista" },
-    { id: 3, cedula: "1122334455", nombre: "Carlos", apellido: "Martínez", telefono: "555-666-7777", estado: "Activo", cuenta_id: "A3", cargo: "Barbero" },
+    { cedula: "12345678", nombre: "Juan Pérez", telefono: "555-1234", cargo: "Barbero" },
+    { cedula: "87654321", nombre: "Ana Gómez", telefono: "555-5678", cargo: "Recepcionista" },
+    { cedula: "11223344", nombre: "Carlos López", telefono: "555-9101", cargo: "Gerente" },
   ]);
 
   const [open, setOpen] = React.useState(false);
-  const [newEmployee, setNewEmployee] = React.useState({
-    id: null,
-    cedula: "",
-    nombre: "",
-    apellido: "",
-    telefono: "",
-    estado: "",
-    cuenta_id: "",
-    cargo: "",
-  });
-  const [editing, setEditing] = React.useState(false); // Control si es un empleado nuevo o uno que se está editando
+  const [openConfirm, setOpenConfirm] = React.useState(false); // Control del cuadro de confirmación
+  const [employeeToDelete, setEmployeeToDelete] = React.useState(null); // Empleado a eliminar
 
-  // Función para manejar el evento de añadir empleado
+  const [newEmployee, setNewEmployee] = React.useState({ cedula: "", nombre: "", telefono: "", cargo: "" });
+  const [editing, setEditing] = React.useState(false);
+  const [errors, setErrors] = React.useState({});
+
+  const validate = () => {
+    let temp = {};
+    temp.cedula = newEmployee.cedula ? "" : "La cédula es obligatoria.";
+    temp.nombre = newEmployee.nombre ? "" : "El nombre es obligatorio.";
+    temp.telefono = newEmployee.telefono ? "" : "El teléfono es obligatorio.";
+    temp.cargo = newEmployee.cargo ? "" : "El cargo es obligatorio.";
+    setErrors(temp);
+    return Object.values(temp).every((x) => x === "");
+  };
+
   const handleAddEmployee = () => {
-    setEditing(false); // Asegurarse de que está en modo de añadir
-    setNewEmployee({
-      id: null,
-      cedula: "",
-      nombre: "",
-      apellido: "",
-      telefono: "",
-      estado: "",
-      cuenta_id: "",
-      cargo: "",
-    }); // Limpiar los campos
+    setEditing(false);
+    setNewEmployee({ cedula: "", nombre: "", telefono: "", cargo: "" });
+    setErrors({});
     setOpen(true);
   };
 
-  // Función para cerrar el modal
   const handleClose = () => {
     setOpen(false);
-    setNewEmployee({
-      id: null,
-      cedula: "",
-      nombre: "",
-      apellido: "",
-      telefono: "",
-      estado: "",
-      cuenta_id: "",
-      cargo: "",
-    }); // Limpiar los campos al cerrar
+    setNewEmployee({ cedula: "", nombre: "", telefono: "", cargo: "" });
+    setErrors({});
   };
 
-  // Función para manejar el envío del formulario (añadir o editar)
   const handleSubmit = () => {
+    if (!validate()) return;
     if (editing) {
-      // Editar empleado
       const updatedRows = rows.map((row) =>
-        row.id === newEmployee.id ? { ...row, ...newEmployee } : row
+        row.cedula === newEmployee.cedula ? { ...row, ...newEmployee } : row
       );
       setRows(updatedRows);
     } else {
-      // Añadir nuevo empleado
-      const newRow = {
-        ...newEmployee,
-        id: rows.length + 1, // Suponiendo que el ID es automático
-      };
+      const newRow = { ...newEmployee };
       setRows([...rows, newRow]);
     }
     handleClose();
   };
 
-  // Función para manejar la eliminación de un empleado
-  const handleDelete = (id) => {
-    const updatedRows = rows.filter((row) => row.id !== id);
-    setRows(updatedRows);
+  const handleEdit = (cedula) => {
+    const employeeToEdit = rows.find((row) => row.cedula === cedula);
+    setNewEmployee(employeeToEdit);
+    setEditing(true);
+    setErrors({});
+    setOpen(true);
   };
 
-  // Función para manejar la edición de un empleado
-  const handleEdit = (id) => {
-    const employeeToEdit = rows.find((row) => row.id === id);
-    setNewEmployee(employeeToEdit);
-    setEditing(true); // Establecer que estamos editando
-    setOpen(true); // Abrir el modal
+  const handleDelete = (cedula) => {
+    setEmployeeToDelete(cedula);
+    setOpenConfirm(true); // Abrir cuadro de confirmación
+  };
+
+  const confirmDelete = () => {
+    const updatedRows = rows.filter((row) => row.cedula !== employeeToDelete);
+    setRows(updatedRows);
+    setOpenConfirm(false); // Cerrar cuadro de confirmación
+    setEmployeeToDelete(null);
+  };
+
+  const cancelDelete = () => {
+    setOpenConfirm(false); // Cerrar cuadro de confirmación
+    setEmployeeToDelete(null);
   };
 
   return (
     <div style={{ padding: "16px" }}>
       {/* Botón para añadir nuevo empleado */}
-      <Button
+      <StyledButton
         variant="contained"
-        color="primary"
+        startIcon={<AddIcon />}
         onClick={handleAddEmployee}
         style={{ marginBottom: "16px" }}
       >
         Añadir Empleado
-      </Button>
+      </StyledButton>
 
       {/* Tabla de empleados */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
               <TableCell>Cédula</TableCell>
               <TableCell>Nombre</TableCell>
-              <TableCell>Apellido</TableCell>
               <TableCell>Teléfono</TableCell>
-              <TableCell>Estado</TableCell>
-              <TableCell>Cuenta ID</TableCell>
               <TableCell>Cargo</TableCell>
               <TableCell>Acciones</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.id}</TableCell>
+              <TableRow key={row.cedula}>
                 <TableCell>{row.cedula}</TableCell>
                 <TableCell>{row.nombre}</TableCell>
-                <TableCell>{row.apellido}</TableCell>
                 <TableCell>{row.telefono}</TableCell>
-                <TableCell>{row.estado}</TableCell>
-                <TableCell>{row.cuenta_id}</TableCell>
                 <TableCell>{row.cargo}</TableCell>
                 <TableCell>
-                  <IconButton color="primary" onClick={() => handleEdit(row.id)}>
+                  <IconButton color="primary" onClick={() => handleEdit(row.cedula)}>
                     <EditIcon />
                   </IconButton>
-                  <IconButton color="error" onClick={() => handleDelete(row.id)}>
+                  <IconButton color="error" onClick={() => handleDelete(row.cedula)}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -156,84 +176,96 @@ function EmployeesCrud() {
       </TableContainer>
 
       {/* Modal para añadir o editar un empleado */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{editing ? "Editar Empleado" : "Añadir Nuevo Empleado"}</DialogTitle>
+      <StyledDialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        <DialogTitle
+          sx={{
+            textAlign: "center",
+            fontWeight: "bold",
+            color: theme.palette.mode === "dark" ? "#fff" : "#000",
+          }}
+        >
+          {editing ? "Editar Empleado" : "Añadir Nuevo Empleado"}
+        </DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="cedula"
-            label="Cédula"
-            fullWidth
-            variant="outlined"
-            value={newEmployee.cedula}
-            onChange={(e) => setNewEmployee({ ...newEmployee, cedula: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="nombre"
-            label="Nombre"
-            fullWidth
-            variant="outlined"
-            value={newEmployee.nombre}
-            onChange={(e) => setNewEmployee({ ...newEmployee, nombre: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="apellido"
-            label="Apellido"
-            fullWidth
-            variant="outlined"
-            value={newEmployee.apellido}
-            onChange={(e) => setNewEmployee({ ...newEmployee, apellido: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="telefono"
-            label="Teléfono"
-            fullWidth
-            variant="outlined"
-            value={newEmployee.telefono}
-            onChange={(e) => setNewEmployee({ ...newEmployee, telefono: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="estado"
-            label="Estado"
-            fullWidth
-            variant="outlined"
-            value={newEmployee.estado}
-            onChange={(e) => setNewEmployee({ ...newEmployee, estado: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="cuenta_id"
-            label="Cuenta ID"
-            fullWidth
-            variant="outlined"
-            value={newEmployee.cuenta_id}
-            onChange={(e) => setNewEmployee({ ...newEmployee, cuenta_id: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="cargo"
-            label="Cargo"
-            fullWidth
-            variant="outlined"
-            value={newEmployee.cargo}
-            onChange={(e) => setNewEmployee({ ...newEmployee, cargo: e.target.value })}
-          />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              paddingTop: 2,
+            }}
+          >
+            <TextField
+              label="Cédula"
+              variant="outlined"
+              fullWidth
+              value={newEmployee.cedula}
+              error={!!errors.cedula}
+              helperText={errors.cedula}
+              onChange={(e) => setNewEmployee({ ...newEmployee, cedula: e.target.value })}
+            />
+            <TextField
+              label="Nombre"
+              variant="outlined"
+              fullWidth
+              value={newEmployee.nombre}
+              error={!!errors.nombre}
+              helperText={errors.nombre}
+              onChange={(e) => setNewEmployee({ ...newEmployee, nombre: e.target.value })}
+            />
+            <TextField
+              label="Teléfono"
+              variant="outlined"
+              fullWidth
+              value={newEmployee.telefono}
+              error={!!errors.telefono}
+              helperText={errors.telefono}
+              onChange={(e) => setNewEmployee({ ...newEmployee, telefono: e.target.value })}
+            />
+            <TextField
+              label="Cargo"
+              variant="outlined"
+              fullWidth
+              value={newEmployee.cargo}
+              error={!!errors.cargo}
+              helperText={errors.cargo}
+              onChange={(e) => setNewEmployee({ ...newEmployee, cargo: e.target.value })}
+            />
+          </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
+        <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
+          <Button onClick={handleClose} variant="outlined" color="secondary">
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} color="primary">
+          <Button onClick={handleSubmit} variant="contained" color="primary">
             {editing ? "Guardar Cambios" : "Añadir"}
+          </Button>
+        </DialogActions>
+      </StyledDialog>
+
+      {/* Cuadro de confirmación para eliminar */}
+      <Dialog open={openConfirm} onClose={cancelDelete}>
+        <DialogTitle
+          sx={{ color: theme.palette.mode === "dark" ? "#fff" : "#000" }}
+        >
+          Confirmar Eliminación
+        </DialogTitle>
+        <DialogContent
+          sx={{ color: theme.palette.mode === "dark" ? "#fff" : "#000" }}
+        >
+          ¿Está seguro de que desea eliminar este empleado?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelDelete} variant="outlined" color="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={confirmDelete} variant="contained" color="error">
+            Eliminar
           </Button>
         </DialogActions>
       </Dialog>
     </div>
   );
 }
+
 export default EmployeesCrud;
