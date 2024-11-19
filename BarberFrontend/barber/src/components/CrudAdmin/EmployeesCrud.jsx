@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import EmployeeService from "../CrudAdmin/Services/EmployeeService"; // Importa el servicio
 import {
   Button,
   Table,
@@ -16,6 +17,10 @@ import {
   TextField,
   Box,
   useTheme,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -31,6 +36,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
   fontWeight: "bold",
   borderRadius: "25px",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  textTransform: 'none', // Desactivar mayúsculas
   "&:hover": {
     background: theme.palette.mode === "dark"
       ? "linear-gradient(to right, #5a0dba, #1f60d0)"
@@ -54,29 +60,30 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 function EmployeesCrud() {
   const theme = useTheme();
 
-  const [rows, setRows] = React.useState([]);
-  const [open, setOpen] = React.useState(false);
-  const [openConfirm, setOpenConfirm] = React.useState(false);
-  const [employeeToDelete, setEmployeeToDelete] = React.useState(null);
-  const [newEmployee, setNewEmployee] = React.useState({
+  // Estado del componente
+  const [rows, setRows] = useState([]); // Lista de empleados
+  const [open, setOpen] = useState(false); // Modal de añadir/editar
+  const [openConfirm, setOpenConfirm] = useState(false); // Modal de confirmación de eliminación
+  const [employeeToDelete, setEmployeeToDelete] = useState(null); // Empleado a eliminar
+  const [newEmployee, setNewEmployee] = useState({
     cedula: "",
     name: "",
     phone: "",
     cargo: "",
-  });
-  const [editing, setEditing] = React.useState(false);
-  const [errors, setErrors] = React.useState({});
+  }); // Nuevo empleado
+  const [editing, setEditing] = useState(false); // Si estamos editando o creando un nuevo empleado
+  const [errors, setErrors] = useState({}); // Errores de validación
 
-  // Vacío: cargar empleados desde el backend
-  const fetchEmployees = async () => {
-    // Aquí se implementará la lógica para obtener los empleados del backend.
-    console.log("Cargar empleados (vacío)");
-  };
-
-  React.useEffect(() => {
+  // Cargar empleados al cargar el componente
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      const employees = await EmployeeService.getEmployees();
+      setRows(employees);
+    };
     fetchEmployees();
   }, []);
 
+  // Validar campos del formulario
   const validate = () => {
     let temp = {};
     temp.cedula = newEmployee.cedula ? "" : "La cédula es obligatoria.";
@@ -87,42 +94,38 @@ function EmployeesCrud() {
     return Object.values(temp).every((x) => x === "");
   };
 
+  // Evento para añadir nuevo empleado
   const handleAddEmployee = () => {
     setEditing(false);
-    setNewEmployee({
-      cedula: "",
-      name: "",
-      phone: "",
-      cargo: "",
-    });
+    setNewEmployee({ cedula: "", name: "", phone: "", cargo: "" });
     setErrors({});
     setOpen(true);
   };
 
+  // Evento para cerrar el modal
   const handleClose = () => {
     setOpen(false);
-    setNewEmployee({
-      cedula: "",
-      name: "",
-      phone: "",
-      cargo: "",
-    });
+    setNewEmployee({ cedula: "", name: "", phone: "", cargo: "" });
     setErrors({});
   };
 
+  // Evento para guardar un empleado (nuevo o editado)
   const handleSubmit = async () => {
     if (!validate()) return;
 
     if (editing) {
-      // Vacío: actualizar empleado
-      console.log("Actualizar empleado (vacío):", newEmployee);
+      await EmployeeService.updateEmployee(newEmployee);
     } else {
-      // Vacío: añadir nuevo empleado
-      console.log("Añadir empleado (vacío):", newEmployee);
+      await EmployeeService.createEmployee(newEmployee);
     }
+
+    // Refrescar la lista de empleados
+    const updatedEmployees = await EmployeeService.getEmployees();
+    setRows(updatedEmployees);
     handleClose();
   };
 
+  // Evento para editar un empleado
   const handleEdit = (cedula) => {
     const employeeToEdit = rows.find((row) => row.cedula === cedula);
     setNewEmployee(employeeToEdit);
@@ -131,17 +134,21 @@ function EmployeesCrud() {
     setOpen(true);
   };
 
+  // Evento para eliminar un empleado
   const handleDelete = (cedula) => {
     setEmployeeToDelete(cedula);
     setOpenConfirm(true);
   };
 
+  // Confirmar la eliminación del empleado
   const confirmDelete = async () => {
-    // Vacío: eliminar empleado
-    console.log("Eliminar empleado (vacío):", employeeToDelete);
+    await EmployeeService.deleteEmployee(employeeToDelete);
+    const updatedEmployees = await EmployeeService.getEmployees();
+    setRows(updatedEmployees);
     setOpenConfirm(false);
   };
 
+  // Cancelar la eliminación
   const cancelDelete = () => {
     setOpenConfirm(false);
     setEmployeeToDelete(null);
@@ -212,7 +219,7 @@ function EmployeesCrud() {
               onChange={(e) => setNewEmployee({ ...newEmployee, cedula: e.target.value })}
             />
             <TextField
-              label="Nombre del Empleado"
+              label="Nombre"
               variant="outlined"
               fullWidth
               value={newEmployee.name}
@@ -229,22 +236,35 @@ function EmployeesCrud() {
               helperText={errors.phone}
               onChange={(e) => setNewEmployee({ ...newEmployee, phone: e.target.value })}
             />
-            <TextField
-              label="Cargo"
-              variant="outlined"
-              fullWidth
-              value={newEmployee.cargo}
-              error={!!errors.cargo}
-              helperText={errors.cargo}
-              onChange={(e) => setNewEmployee({ ...newEmployee, cargo: e.target.value })}
-            />
+            <FormControl fullWidth error={!!errors.cargo}>
+              <InputLabel>Cargo</InputLabel>
+              <Select
+                value={newEmployee.cargo}
+                onChange={(e) => setNewEmployee({ ...newEmployee, cargo: e.target.value })}
+                label="Cargo"
+              >
+                <MenuItem value="Barbero">Barbero</MenuItem>
+                <MenuItem value="Cajero">Cajero</MenuItem>
+              </Select>
+              {errors.cargo && <p style={{ color: "red" }}>{errors.cargo}</p>}
+            </FormControl>
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
-          <Button onClick={handleClose} variant="outlined" color="secondary">
+          <Button 
+            onClick={handleClose} 
+            variant="outlined" 
+            color="secondary"
+            style={{ textTransform: "none" }}
+          >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} variant="contained" color="primary">
+          <Button 
+            onClick={handleSubmit} 
+            variant="contained" 
+            color="primary"
+            style={{ textTransform: "none" }}
+          >
             {editing ? "Guardar Cambios" : "Añadir"}
           </Button>
         </DialogActions>
@@ -258,10 +278,10 @@ function EmployeesCrud() {
           ¿Estás seguro de que deseas eliminar este empleado?
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelDelete} color="primary">
+          <Button onClick={cancelDelete} color="primary" style={{ textTransform: "none" }}>
             Cancelar
           </Button>
-          <Button onClick={confirmDelete} color="error">
+          <Button onClick={confirmDelete} color="error" style={{ textTransform: "none" }}>
             Eliminar
           </Button>
         </DialogActions>
@@ -271,4 +291,3 @@ function EmployeesCrud() {
 }
 
 export default EmployeesCrud;
-

@@ -21,6 +21,7 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { styled } from "@mui/system";
+import ServiceService from "../CrudAdmin/Services/ServiceService";
 
 const StyledButton = styled(Button)(({ theme }) => ({
   background: theme.palette.mode === "dark"
@@ -36,6 +37,7 @@ const StyledButton = styled(Button)(({ theme }) => ({
       ? "linear-gradient(to right, #5a0dba, #1f60d0)"
       : "linear-gradient(to right, #1f60d0, #5a0dba)",
   },
+  textTransform: "none", // Desactivar mayúsculas predeterminadas
 }));
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
@@ -58,14 +60,14 @@ function ServicesCrud() {
   const [open, setOpen] = React.useState(false);
   const [openConfirm, setOpenConfirm] = React.useState(false);
   const [serviceToDelete, setServiceToDelete] = React.useState(null);
-  const [newService, setNewService] = React.useState({ id: null, name: "", price: "", description: "" });
+  const [newService, setNewService] = React.useState({ id: null, name: "", price: "", duration: "" });
   const [editing, setEditing] = React.useState(false);
   const [errors, setErrors] = React.useState({});
 
-  // Vacío: cargar servicios desde el backend
+  // Cargar servicios desde el backend
   const fetchServices = async () => {
-    // Aquí se implementará la lógica para obtener los servicios del backend.
-    console.log("Cargar servicios (vacío)");
+    const services = await ServiceService.getServices();
+    setRows(services);
   };
 
   React.useEffect(() => {
@@ -76,21 +78,21 @@ function ServicesCrud() {
     let temp = {};
     temp.name = newService.name ? "" : "El nombre es obligatorio.";
     temp.price = newService.price ? "" : "El precio es obligatorio.";
-    temp.description = newService.description ? "" : "La descripción es obligatoria.";
+    temp.duration = newService.duration ? "" : "La duración es obligatoria.";
     setErrors(temp);
     return Object.values(temp).every((x) => x === "");
   };
 
   const handleAddService = () => {
     setEditing(false);
-    setNewService({ id: null, name: "", price: "", description: "" });
+    setNewService({ id: null, name: "", price: "", duration: "" });
     setErrors({});
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setNewService({ id: null, name: "", price: "", description: "" });
+    setNewService({ id: null, name: "", price: "", duration: "" });
     setErrors({});
   };
 
@@ -98,12 +100,11 @@ function ServicesCrud() {
     if (!validate()) return;
 
     if (editing) {
-      // Vacío: actualizar servicio
-      console.log("Actualizar servicio (vacío):", newService);
+      await ServiceService.updateService(newService);
     } else {
-      // Vacío: añadir nuevo servicio
-      console.log("Añadir servicio (vacío):", newService);
+      await ServiceService.createService(newService);
     }
+    fetchServices();
     handleClose();
   };
 
@@ -121,8 +122,8 @@ function ServicesCrud() {
   };
 
   const confirmDelete = async () => {
-    // Vacío: eliminar servicio
-    console.log("Eliminar servicio (vacío):", serviceToDelete);
+    await ServiceService.deleteService(serviceToDelete);
+    fetchServices();
     setOpenConfirm(false);
   };
 
@@ -147,8 +148,8 @@ function ServicesCrud() {
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell>Nombre del Servicio</TableCell>
-              <TableCell>Descripción</TableCell>
+              <TableCell>Nombre</TableCell>
+              <TableCell>Duración</TableCell>
               <TableCell>Precio</TableCell>
               <TableCell>Acciones</TableCell>
             </TableRow>
@@ -158,7 +159,7 @@ function ServicesCrud() {
               <TableRow key={row.id}>
                 <TableCell>{row.id}</TableCell>
                 <TableCell>{row.name}</TableCell>
-                <TableCell>{row.description}</TableCell>
+                <TableCell>{row.duration}</TableCell>
                 <TableCell>{row.price}</TableCell>
                 <TableCell>
                   <IconButton color="primary" onClick={() => handleEdit(row.id)}>
@@ -187,7 +188,7 @@ function ServicesCrud() {
         <DialogContent>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, paddingTop: 2 }}>
             <TextField
-              label="Nombre del Servicio"
+              label="Nombre"
               variant="outlined"
               fullWidth
               value={newService.name}
@@ -205,23 +206,31 @@ function ServicesCrud() {
               onChange={(e) => setNewService({ ...newService, price: e.target.value })}
             />
             <TextField
-              label="Descripción"
+              label="Duración"
               variant="outlined"
               fullWidth
-              multiline
-              rows={3}
-              value={newService.description}
-              error={!!errors.description}
-              helperText={errors.description}
-              onChange={(e) => setNewService({ ...newService, description: e.target.value })}
+              value={newService.duration}
+              error={!!errors.duration}
+              helperText={errors.duration}
+              onChange={(e) => setNewService({ ...newService, duration: e.target.value })}
             />
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
-          <Button onClick={handleClose} variant="outlined" color="secondary">
+          <Button 
+            onClick={handleClose} 
+            variant="outlined" 
+            color="secondary"
+            style={{ textTransform: "none" }}
+          >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} variant="contained" color="primary">
+          <Button 
+            onClick={handleSubmit} 
+            variant="contained" 
+            color="primary"
+            style={{ textTransform: "none" }}
+          >
             {editing ? "Guardar Cambios" : "Añadir"}
           </Button>
         </DialogActions>
@@ -235,10 +244,10 @@ function ServicesCrud() {
           ¿Estás seguro de que deseas eliminar este servicio?
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelDelete} color="primary">
+          <Button onClick={cancelDelete} color="primary" style={{ textTransform: "none" }}>
             Cancelar
           </Button>
-          <Button onClick={confirmDelete} color="error">
+          <Button onClick={confirmDelete} color="error" style={{ textTransform: "none" }}>
             Eliminar
           </Button>
         </DialogActions>
@@ -247,4 +256,4 @@ function ServicesCrud() {
   );
 }
 
-export default ServicesCrud;
+export default ServicesCrud

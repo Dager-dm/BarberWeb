@@ -21,6 +21,7 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { styled } from "@mui/system";
+import ClientService from "./Services/ClientService"; 
 
 const StyledButton = styled(Button)(({ theme }) => ({
   background: theme.palette.mode === "dark"
@@ -68,10 +69,11 @@ function ClientsCrud() {
   const [editing, setEditing] = React.useState(false);
   const [errors, setErrors] = React.useState({});
 
-  // Vacío: cargar clientes desde el backend
+  // Cargar clientes desde el backend
   const fetchClients = async () => {
-    // Aquí se implementará la lógica para obtener los clientes del backend.
-    console.log("Cargar clientes (vacío)");
+    const clients = await ClientService.getClients();
+    setRows(clients);
+    console.log("Clientes cargados:", clients);
   };
 
   React.useEffect(() => {
@@ -118,13 +120,16 @@ function ClientsCrud() {
     if (!validate()) return;
 
     if (editing) {
-      // Vacío: actualizar cliente
-      console.log("Actualizar cliente (vacío):", newClient);
+      // Actualizar cliente
+      await ClientService.updateClient(newClient);
+      console.log("Cliente actualizado:", newClient);
     } else {
-      // Vacío: añadir nuevo cliente
-      console.log("Añadir cliente (vacío):", newClient);
+      // Añadir nuevo cliente
+      await ClientService.createClient(newClient);
+      console.log("Cliente añadido:", newClient);
     }
     handleClose();
+    fetchClients(); // Recargar la lista de clientes
   };
 
   const handleEdit = (cedula) => {
@@ -141,9 +146,11 @@ function ClientsCrud() {
   };
 
   const confirmDelete = async () => {
-    // Vacío: eliminar cliente
-    console.log("Eliminar cliente (vacío):", clientToDelete);
+    // Eliminar cliente
+    await ClientService.deleteClient(clientToDelete);
+    console.log("Cliente eliminado:", clientToDelete);
     setOpenConfirm(false);
+    fetchClients(); // Recargar la lista de clientes
   };
 
   const cancelDelete = () => {
@@ -157,9 +164,9 @@ function ClientsCrud() {
         variant="contained"
         startIcon={<AddIcon />}
         onClick={handleAddClient}
-        style={{ marginBottom: "16px" }}
+        style={{ marginBottom: "16px", textTransform: "none" }}
       >
-        Añadir Cliente
+        Añadir cliente
       </StyledButton>
 
       <TableContainer component={Paper}>
@@ -216,7 +223,7 @@ function ClientsCrud() {
               onChange={(e) => setNewClient({ ...newClient, cedula: e.target.value })}
             />
             <TextField
-              label="Nombre del Cliente"
+              label="Nombre"
               variant="outlined"
               fullWidth
               value={newClient.name}
@@ -255,10 +262,20 @@ function ClientsCrud() {
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
-          <Button onClick={handleClose} variant="outlined" color="secondary">
+          <Button 
+            onClick={handleClose} 
+            variant="outlined" 
+            color="secondary"
+            style={{ textTransform: "none" }} 
+          >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} variant="contained" color="primary">
+          <Button 
+            onClick={handleSubmit} 
+            variant="contained" 
+            color="primary"
+            style={{ textTransform: "none" }} 
+          >
             {editing ? "Guardar Cambios" : "Añadir"}
           </Button>
         </DialogActions>
@@ -266,16 +283,16 @@ function ClientsCrud() {
 
       <Dialog open={openConfirm} onClose={cancelDelete}>
         <DialogTitle sx={{ color: theme.palette.mode === "dark" ? "#fff" : "#000" }}>
-          Confirmar Eliminación
+          Confirmar eliminación
         </DialogTitle>
         <DialogContent>
           ¿Estás seguro de que deseas eliminar este cliente?
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelDelete} variant="outlined" color="secondary">
+          <Button onClick={cancelDelete} variant="outlined" color="secondary" style={{ textTransform: "none" }}>
             Cancelar
           </Button>
-          <Button onClick={confirmDelete} variant="contained" color="error">
+          <Button onClick={confirmDelete} variant="contained" color="error" style={{ textTransform: "none" }}>
             Eliminar
           </Button>
         </DialogActions>
@@ -285,3 +302,4 @@ function ClientsCrud() {
 }
 
 export default ClientsCrud;
+
