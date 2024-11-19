@@ -69,3 +69,4 @@ logs
 /barberfrontend/barber/.njsproj
 /barberfrontend/barber/.sln
 /barberfrontend/barber/.sw?
+.vscode/launch.json
