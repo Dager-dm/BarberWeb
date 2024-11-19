@@ -52,21 +52,25 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 function ServicesCrud() {
-  const theme = useTheme(); // Detectar el tema actual
+  const theme = useTheme();
 
-  const [rows, setRows] = React.useState([
-    { id: 1, name: "Corte de cabello", price: "$10", description: "Un fade"},
-    { id: 2, name: "Afeitado", price: "$8", description: "Un afeitado clásico"},
-    { id: 3, name: "Tinte", price: "$15", description: "Cambio de color de cabello"}
-  ]);
-
+  const [rows, setRows] = React.useState([]);
   const [open, setOpen] = React.useState(false);
-  const [openConfirm, setOpenConfirm] = React.useState(false); // Control del cuadro de confirmación
-  const [serviceToDelete, setServiceToDelete] = React.useState(null); // Servicio a eliminar
-
+  const [openConfirm, setOpenConfirm] = React.useState(false);
+  const [serviceToDelete, setServiceToDelete] = React.useState(null);
   const [newService, setNewService] = React.useState({ id: null, name: "", price: "", description: "" });
   const [editing, setEditing] = React.useState(false);
   const [errors, setErrors] = React.useState({});
+
+  // Vacío: cargar servicios desde el backend
+  const fetchServices = async () => {
+    // Aquí se implementará la lógica para obtener los servicios del backend.
+    console.log("Cargar servicios (vacío)");
+  };
+
+  React.useEffect(() => {
+    fetchServices();
+  }, []);
 
   const validate = () => {
     let temp = {};
@@ -86,23 +90,19 @@ function ServicesCrud() {
 
   const handleClose = () => {
     setOpen(false);
-    setNewService({ id: null, name: "", price: "", description: ""});
+    setNewService({ id: null, name: "", price: "", description: "" });
     setErrors({});
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validate()) return;
+
     if (editing) {
-      const updatedRows = rows.map((row) =>
-        row.id === newService.id ? { ...row, ...newService } : row
-      );
-      setRows(updatedRows);
+      // Vacío: actualizar servicio
+      console.log("Actualizar servicio (vacío):", newService);
     } else {
-      const newRow = {
-        ...newService,
-        id: rows.length + 1,
-      };
-      setRows([...rows, newRow]);
+      // Vacío: añadir nuevo servicio
+      console.log("Añadir servicio (vacío):", newService);
     }
     handleClose();
   };
@@ -117,24 +117,22 @@ function ServicesCrud() {
 
   const handleDelete = (id) => {
     setServiceToDelete(id);
-    setOpenConfirm(true); // Abrir cuadro de confirmación
+    setOpenConfirm(true);
   };
 
-  const confirmDelete = () => {
-    const updatedRows = rows.filter((row) => row.id !== serviceToDelete);
-    setRows(updatedRows);
-    setOpenConfirm(false); // Cerrar cuadro de confirmación
-    setServiceToDelete(null);
+  const confirmDelete = async () => {
+    // Vacío: eliminar servicio
+    console.log("Eliminar servicio (vacío):", serviceToDelete);
+    setOpenConfirm(false);
   };
 
   const cancelDelete = () => {
-    setOpenConfirm(false); // Cerrar cuadro de confirmación
+    setOpenConfirm(false);
     setServiceToDelete(null);
   };
 
   return (
     <div style={{ padding: "16px" }}>
-      {/* Botón para añadir nuevo servicio */}
       <StyledButton
         variant="contained"
         startIcon={<AddIcon />}
@@ -144,7 +142,6 @@ function ServicesCrud() {
         Añadir Servicio
       </StyledButton>
 
-      {/* Tabla de servicios */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -177,7 +174,6 @@ function ServicesCrud() {
         </Table>
       </TableContainer>
 
-      {/* Modal para añadir o editar un servicio */}
       <StyledDialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle
           sx={{
@@ -189,14 +185,7 @@ function ServicesCrud() {
           {editing ? "Editar Servicio" : "Añadir Nuevo Servicio"}
         </DialogTitle>
         <DialogContent>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-              paddingTop: 2,
-            }}
-          >
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, paddingTop: 2 }}>
             <TextField
               label="Nombre del Servicio"
               variant="outlined"
@@ -238,23 +227,18 @@ function ServicesCrud() {
         </DialogActions>
       </StyledDialog>
 
-      {/* Cuadro de confirmación para eliminar */}
       <Dialog open={openConfirm} onClose={cancelDelete}>
-        <DialogTitle
-          sx={{ color: theme.palette.mode === "dark" ? "#fff" : "#000" }}
-        >
+        <DialogTitle sx={{ color: theme.palette.mode === "dark" ? "#fff" : "#000" }}>
           Confirmar Eliminación
         </DialogTitle>
-        <DialogContent
-          sx={{ color: theme.palette.mode === "dark" ? "#fff" : "#000" }}
-        >
-          ¿Está seguro de que desea eliminar este servicio?
+        <DialogContent>
+          ¿Estás seguro de que deseas eliminar este servicio?
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelDelete} variant="outlined" color="secondary">
+          <Button onClick={cancelDelete} color="primary">
             Cancelar
           </Button>
-          <Button onClick={confirmDelete} variant="contained" color="error">
+          <Button onClick={confirmDelete} color="error">
             Eliminar
           </Button>
         </DialogActions>

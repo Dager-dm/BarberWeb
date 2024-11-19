@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Scissors, Calendar, User, ShoppingCart } from 'lucide-react';
+import { Scissors, Calendar, User } from 'lucide-react';
 import { services, barbers } from '../components/data';
 import ServiceCard from './ServiceCard';
 import BarberCard from '../components/BarberCard';
 import DatePicker from '../components/DatePicker';
 import BookingSummary from '../components/BookingSummary';
+import { createTheme, ThemeProvider, useMediaQuery, CssBaseline, Button, Typography, Paper } from '@mui/material';
 
 function CitasCliente() {
   const [selectedServices, setSelectedServices] = useState([]);
@@ -54,118 +55,148 @@ function CitasCliente() {
     console.log(appointment);
   };
 
+  // Crear tema de Material UI con soporte para modo oscuro y claro
+  const theme = createTheme({
+    palette: {
+      mode: 'dark', // Usa el modo oscuro por defecto
+      primary: {
+        main: '#1976d2',
+      },
+      secondary: {
+        main: '#dc004e',
+      },
+      background: {
+        default: '#121212', // Fondo oscuro por defecto
+        paper: '#1d1d1d', // Color de fondo de los cuadros
+      },
+      text: {
+        primary: '#ffffff', // Texto blanco para el modo oscuro
+      },
+    },
+    typography: {
+      fontFamily: 'Roboto, sans-serif',
+    },
+  });
+
   return (
-    <div className="min-h-screen bg-gray-100">
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex gap-8">
-          {/* Left Section - Booking Steps */}
-          <div className="flex-1">
-            {/* Services Section */}
-            {currentStep === 'services' && (
-              <section>
-                <div className="flex items-center gap-2 mb-6">
-                  <Scissors className="w-6 h-6 text-blue-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">Selecciona tus servicios</h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {services.map((service) => (
-                    <ServiceCard
-                      key={service.id}
-                      service={service}
-                      selected={selectedServices.some(s => s.id === service.id)}
-                      onClick={() => handleServiceToggle(service)}
-                    />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Barbers Section */}
-            {currentStep === 'barber' && (
-              <section>
-                <div className="flex items-center gap-2 mb-6">
-                  <User className="w-6 h-6 text-blue-600" />
-                  <h2 className="text-2xl font-bold text-gray-900">Elige tu barbero</h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {barbers.map((barber) => (
-                    <BarberCard
-                      key={barber.id}
-                      barber={barber}
-                      selected={selectedBarber?.id === barber.id}
-                      onClick={() => setSelectedBarber(barber)}
-                    />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* Date Selection Section */}
-            {currentStep === 'date' && (
-              <section>
-                <div className="flex items-center gap-8 mb-6"> {/* Aumenta el espacio entre el ícono y el texto */}
-                  <Calendar className="w-6 h-6 text-blue-600" />
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Selecciona fecha y hora</h2>
-                </div>
-                <DatePicker
-                  selectedDate={selectedDate}
-                  onDateChange={setSelectedDate}
-                  duration={totalDuration}
-                  className="mt-10"
-                />
-              </section>
-            )}
-
-
-            {/* Navigation Buttons */}
-            <div className="flex justify-between mt-8">
-              {currentStep !== 'services' && (
-                <button
-                  onClick={handlePrevStep}
-                  className="px-6 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
-                >
-                  Anterior
-                </button>
+    <ThemeProvider theme={theme}>
+      <CssBaseline /> {/* Asegura que los estilos de Material UI se apliquen globalmente */}
+      <div className="min-h-screen"> {/* Sin fondo específico, el tema manejará el fondo */}
+        <main className="max-w-7xl mx-auto px-4 py-8 h-auto"> {/* Ajuste dinámico de altura */}
+          <div className="flex gap-8 overflow-y-auto"> {/* Scroll activado solo cuando el contenido excede la altura */}
+            {/* Left Section - Booking Steps */}
+            <div className="flex-1">
+              {/* Services Section */}
+              {currentStep === 'services' && (
+                <section>
+                  <div className="flex items-center gap-2 mb-6">
+                    <Scissors className="w-6 h-6 text-blue-600" />
+                    <Typography variant="h5" color="textPrimary">
+                      Selecciona tus servicios
+                    </Typography>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {services.map((service) => (
+                      <ServiceCard
+                        key={service.id}
+                        service={service}
+                        selected={selectedServices.some(s => s.id === service.id)}
+                        onClick={() => handleServiceToggle(service)}
+                      />
+                    ))}
+                  </div>
+                </section>
               )}
-              {currentStep !== 'date' ? (
-                <button
-                  onClick={handleNextStep}
-                  disabled={
-                    (currentStep === 'services' && selectedServices.length === 0) ||
-                    (currentStep === 'barber' && !selectedBarber)
-                  }
-                  className={`px-6 py-2 rounded-lg ml-auto ${((currentStep === 'services' && selectedServices.length > 0) ||
-                      (currentStep === 'barber' && selectedBarber))
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                      : 'bg-gray-400 cursor-not-allowed text-white'
-                    }`}
-                >
-                  Siguiente
-                </button>
-              ) : (
-                <button
-                  onClick={handleBookAppointment}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 ml-auto"
-                >
-                  Confirmar Reserva
-                </button>
+
+              {/* Barbers Section */}
+              {currentStep === 'barber' && (
+                <section>
+                  <div className="flex items-center gap-2 mb-6">
+                    <User className="w-6 h-6 text-blue-600" />
+                    <Typography variant="h5" color="textPrimary">
+                      Elige tu barbero
+                    </Typography>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {barbers.map((barber) => (
+                      <BarberCard
+                        key={barber.id}
+                        barber={barber}
+                        selected={selectedBarber?.id === barber.id}
+                        onClick={() => setSelectedBarber(barber)}
+                      />
+                    ))}
+                  </div>
+                </section>
               )}
+
+              {/* Date Selection Section */}
+              {currentStep === 'date' && (
+                <section>
+                  <div className="flex items-center gap-8 mb-6">
+                    <Calendar className="w-6 h-6 text-blue-600" />
+                    <Typography variant="h5" color="textPrimary">
+                      Selecciona fecha y hora
+                    </Typography>
+                  </div>
+                  <DatePicker
+                    selectedDate={selectedDate}
+                    onDateChange={setSelectedDate}
+                    duration={totalDuration}
+                    className="mt-10"
+                  />
+                </section>
+              )}
+
+              {/* Navigation Buttons */}
+              <div className="flex justify-between mt-8">
+                {currentStep !== 'services' && (
+                  <Button
+                    onClick={handlePrevStep}
+                    variant="contained"
+                    color="secondary"
+                  >
+                    Anterior
+                  </Button>
+                )}
+                {currentStep !== 'date' ? (
+                  <Button
+                    onClick={handleNextStep}
+                    disabled={
+                      (currentStep === 'services' && selectedServices.length === 0) ||
+                      (currentStep === 'barber' && !selectedBarber)
+                    }
+                    variant="contained"
+                    color="primary"
+                  >
+                    Siguiente
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleBookAppointment}
+                    variant="contained"
+                    color="primary"
+                  >
+                    Confirmar Reserva
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Right Section - Booking Summary */}
-          <BookingSummary
-            selectedServices={selectedServices}
-            selectedBarber={selectedBarber}
-            selectedDate={selectedDate}
-            totalPrice={totalPrice}
-            totalDuration={totalDuration}
-          />
-        </div>
-      </main>
-     </div>
+            {/* Right Section - Booking Summary */}
+            <Paper elevation={3} sx={{ p: 2 }}>
+              <BookingSummary
+                selectedServices={selectedServices}
+                selectedBarber={selectedBarber}
+                selectedDate={selectedDate}
+                totalPrice={totalPrice}
+                totalDuration={totalDuration}
+              />
+            </Paper>
+          </div>
+        </main>
+      </div>
+    </ThemeProvider>
   );
 }
 

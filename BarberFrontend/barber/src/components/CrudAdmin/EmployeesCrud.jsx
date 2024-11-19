@@ -52,27 +52,36 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 }));
 
 function EmployeesCrud() {
-  const theme = useTheme(); // Detectar el tema actual
+  const theme = useTheme();
 
-  const [rows, setRows] = React.useState([
-    { cedula: "12345678", nombre: "Juan Pérez", telefono: "555-1234", cargo: "Barbero" },
-    { cedula: "87654321", nombre: "Ana Gómez", telefono: "555-5678", cargo: "Recepcionista" },
-    { cedula: "11223344", nombre: "Carlos López", telefono: "555-9101", cargo: "Gerente" },
-  ]);
-
+  const [rows, setRows] = React.useState([]);
   const [open, setOpen] = React.useState(false);
-  const [openConfirm, setOpenConfirm] = React.useState(false); // Control del cuadro de confirmación
-  const [employeeToDelete, setEmployeeToDelete] = React.useState(null); // Empleado a eliminar
-
-  const [newEmployee, setNewEmployee] = React.useState({ cedula: "", nombre: "", telefono: "", cargo: "" });
+  const [openConfirm, setOpenConfirm] = React.useState(false);
+  const [employeeToDelete, setEmployeeToDelete] = React.useState(null);
+  const [newEmployee, setNewEmployee] = React.useState({
+    cedula: "",
+    name: "",
+    phone: "",
+    cargo: "",
+  });
   const [editing, setEditing] = React.useState(false);
   const [errors, setErrors] = React.useState({});
+
+  // Vacío: cargar empleados desde el backend
+  const fetchEmployees = async () => {
+    // Aquí se implementará la lógica para obtener los empleados del backend.
+    console.log("Cargar empleados (vacío)");
+  };
+
+  React.useEffect(() => {
+    fetchEmployees();
+  }, []);
 
   const validate = () => {
     let temp = {};
     temp.cedula = newEmployee.cedula ? "" : "La cédula es obligatoria.";
-    temp.nombre = newEmployee.nombre ? "" : "El nombre es obligatorio.";
-    temp.telefono = newEmployee.telefono ? "" : "El teléfono es obligatorio.";
+    temp.name = newEmployee.name ? "" : "El nombre es obligatorio.";
+    temp.phone = newEmployee.phone ? "" : "El teléfono es obligatorio.";
     temp.cargo = newEmployee.cargo ? "" : "El cargo es obligatorio.";
     setErrors(temp);
     return Object.values(temp).every((x) => x === "");
@@ -80,27 +89,36 @@ function EmployeesCrud() {
 
   const handleAddEmployee = () => {
     setEditing(false);
-    setNewEmployee({ cedula: "", nombre: "", telefono: "", cargo: "" });
+    setNewEmployee({
+      cedula: "",
+      name: "",
+      phone: "",
+      cargo: "",
+    });
     setErrors({});
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setNewEmployee({ cedula: "", nombre: "", telefono: "", cargo: "" });
+    setNewEmployee({
+      cedula: "",
+      name: "",
+      phone: "",
+      cargo: "",
+    });
     setErrors({});
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validate()) return;
+
     if (editing) {
-      const updatedRows = rows.map((row) =>
-        row.cedula === newEmployee.cedula ? { ...row, ...newEmployee } : row
-      );
-      setRows(updatedRows);
+      // Vacío: actualizar empleado
+      console.log("Actualizar empleado (vacío):", newEmployee);
     } else {
-      const newRow = { ...newEmployee };
-      setRows([...rows, newRow]);
+      // Vacío: añadir nuevo empleado
+      console.log("Añadir empleado (vacío):", newEmployee);
     }
     handleClose();
   };
@@ -115,24 +133,22 @@ function EmployeesCrud() {
 
   const handleDelete = (cedula) => {
     setEmployeeToDelete(cedula);
-    setOpenConfirm(true); // Abrir cuadro de confirmación
+    setOpenConfirm(true);
   };
 
-  const confirmDelete = () => {
-    const updatedRows = rows.filter((row) => row.cedula !== employeeToDelete);
-    setRows(updatedRows);
-    setOpenConfirm(false); // Cerrar cuadro de confirmación
-    setEmployeeToDelete(null);
+  const confirmDelete = async () => {
+    // Vacío: eliminar empleado
+    console.log("Eliminar empleado (vacío):", employeeToDelete);
+    setOpenConfirm(false);
   };
 
   const cancelDelete = () => {
-    setOpenConfirm(false); // Cerrar cuadro de confirmación
+    setOpenConfirm(false);
     setEmployeeToDelete(null);
   };
 
   return (
     <div style={{ padding: "16px" }}>
-      {/* Botón para añadir nuevo empleado */}
       <StyledButton
         variant="contained"
         startIcon={<AddIcon />}
@@ -142,7 +158,6 @@ function EmployeesCrud() {
         Añadir Empleado
       </StyledButton>
 
-      {/* Tabla de empleados */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -158,8 +173,8 @@ function EmployeesCrud() {
             {rows.map((row) => (
               <TableRow key={row.cedula}>
                 <TableCell>{row.cedula}</TableCell>
-                <TableCell>{row.nombre}</TableCell>
-                <TableCell>{row.telefono}</TableCell>
+                <TableCell>{row.name}</TableCell>
+                <TableCell>{row.phone}</TableCell>
                 <TableCell>{row.cargo}</TableCell>
                 <TableCell>
                   <IconButton color="primary" onClick={() => handleEdit(row.cedula)}>
@@ -175,7 +190,6 @@ function EmployeesCrud() {
         </Table>
       </TableContainer>
 
-      {/* Modal para añadir o editar un empleado */}
       <StyledDialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle
           sx={{
@@ -187,14 +201,7 @@ function EmployeesCrud() {
           {editing ? "Editar Empleado" : "Añadir Nuevo Empleado"}
         </DialogTitle>
         <DialogContent>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 2,
-              paddingTop: 2,
-            }}
-          >
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, paddingTop: 2 }}>
             <TextField
               label="Cédula"
               variant="outlined"
@@ -205,22 +212,22 @@ function EmployeesCrud() {
               onChange={(e) => setNewEmployee({ ...newEmployee, cedula: e.target.value })}
             />
             <TextField
-              label="Nombre"
+              label="Nombre del Empleado"
               variant="outlined"
               fullWidth
-              value={newEmployee.nombre}
-              error={!!errors.nombre}
-              helperText={errors.nombre}
-              onChange={(e) => setNewEmployee({ ...newEmployee, nombre: e.target.value })}
+              value={newEmployee.name}
+              error={!!errors.name}
+              helperText={errors.name}
+              onChange={(e) => setNewEmployee({ ...newEmployee, name: e.target.value })}
             />
             <TextField
               label="Teléfono"
               variant="outlined"
               fullWidth
-              value={newEmployee.telefono}
-              error={!!errors.telefono}
-              helperText={errors.telefono}
-              onChange={(e) => setNewEmployee({ ...newEmployee, telefono: e.target.value })}
+              value={newEmployee.phone}
+              error={!!errors.phone}
+              helperText={errors.phone}
+              onChange={(e) => setNewEmployee({ ...newEmployee, phone: e.target.value })}
             />
             <TextField
               label="Cargo"
@@ -243,23 +250,18 @@ function EmployeesCrud() {
         </DialogActions>
       </StyledDialog>
 
-      {/* Cuadro de confirmación para eliminar */}
       <Dialog open={openConfirm} onClose={cancelDelete}>
-        <DialogTitle
-          sx={{ color: theme.palette.mode === "dark" ? "#fff" : "#000" }}
-        >
+        <DialogTitle sx={{ color: theme.palette.mode === "dark" ? "#fff" : "#000" }}>
           Confirmar Eliminación
         </DialogTitle>
-        <DialogContent
-          sx={{ color: theme.palette.mode === "dark" ? "#fff" : "#000" }}
-        >
-          ¿Está seguro de que desea eliminar este empleado?
+        <DialogContent>
+          ¿Estás seguro de que deseas eliminar este empleado?
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelDelete} variant="outlined" color="secondary">
+          <Button onClick={cancelDelete} color="primary">
             Cancelar
           </Button>
-          <Button onClick={confirmDelete} variant="contained" color="error">
+          <Button onClick={confirmDelete} color="error">
             Eliminar
           </Button>
         </DialogActions>
@@ -269,3 +271,4 @@ function EmployeesCrud() {
 }
 
 export default EmployeesCrud;
+

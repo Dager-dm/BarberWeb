@@ -53,10 +53,10 @@ const NAVIGATION = [
         icon: <DescriptionIcon />,
       },
       {
-        segment: "Arqueo de Caja",
+        segment: "Caja",
         title: "Arqueo de Caja",
         icon: <DescriptionIcon />,
-      },
+      }
     ],
   },
   {
