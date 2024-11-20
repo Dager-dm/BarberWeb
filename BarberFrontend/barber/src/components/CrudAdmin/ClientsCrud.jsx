@@ -17,36 +17,87 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { styled } from "@mui/system";
+import ClientService from "./Services/ClientService"; 
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  background: theme.palette.mode === "dark"
+    ? "linear-gradient(to right, #6a11cb, #2575fc)"
+    : "linear-gradient(to right, #2575fc, #6a11cb)",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  "&:hover": {
+    background: theme.palette.mode === "dark"
+      ? "linear-gradient(to right, #5a0dba, #1f60d0)"
+      : "linear-gradient(to right, #1f60d0, #5a0dba)",
+  },
+}));
+
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiDialog-paper": {
+    borderRadius: "20px",
+    padding: theme.spacing(3),
+    background: theme.palette.mode === "dark"
+      ? "linear-gradient(to right, #1e1e1e, #252525)"
+      : "linear-gradient(to right, #ffffff, #f7f9fc)",
+    boxShadow: theme.palette.mode === "dark"
+      ? "0px 4px 20px rgba(255, 255, 255, 0.1)"
+      : "0px 4px 20px rgba(0, 0, 0, 0.1)",
+  },
+}));
 
 function ClientsCrud() {
-  const [rows, setRows] = React.useState([
-    { id: 1, nombre: "Juan", apellido: "Pérez", correo: "juan@example.com", telefono: "123-456-7890", cuenta_id: "C1" },
-    { id: 2, nombre: "Ana", apellido: "López", correo: "ana@example.com", telefono: "987-654-3210", cuenta_id: "C2" },
-    { id: 3, nombre: "Carlos", apellido: "Martínez", correo: "carlos@example.com", telefono: "555-666-7777", cuenta_id: "C3" },
-  ]);
+  const theme = useTheme();
 
+  const [rows, setRows] = React.useState([]);
   const [open, setOpen] = React.useState(false);
+  const [openConfirm, setOpenConfirm] = React.useState(false);
+  const [clientToDelete, setClientToDelete] = React.useState(null);
   const [newClient, setNewClient] = React.useState({
-    id: null,
-    nombre: "",
-    apellido: "",
-    correo: "",
-    telefono: "",
-    cuenta_id: "",
+    cedula: "",
+    name: "",
+    email: "",
+    password: "",
+    phone: "",
   });
-  const [editing, setEditing] = React.useState(false); // Control si es un cliente nuevo o uno que se está editando
+  const [editing, setEditing] = React.useState(false);
+  const [errors, setErrors] = React.useState({});
 
-  // Función para manejar el evento de añadir cliente
+  // Cargar clientes desde el backend
+  const fetchClients = async () => {
+    const clients = await ClientService.getClients();
+    setRows(clients);
+    console.log("Clientes cargados:", clients);
+  };
+
+  React.useEffect(() => {
+    fetchClients();
+  }, []);
+
+  const validate = () => {
+    let temp = {};
+    temp.cedula = newClient.cedula ? "" : "La cédula es obligatoria.";
+    temp.name = newClient.name ? "" : "El nombre es obligatorio.";
+    temp.email = newClient.email ? "" : "El correo es obligatorio.";
+    temp.password = newClient.password ? "" : "La contraseña es obligatoria.";
+    temp.phone = newClient.phone ? "" : "El teléfono es obligatorio.";
+    setErrors(temp);
+    return Object.values(temp).every((x) => x === "");
+  };
+
   const handleAddClient = () => {
-    setEditing(false); // Asegurarse de que está en modo de añadir
+    setEditing(false);
     setNewClient({
-      id: null,
-      nombre: "",
-      apellido: "",
-      correo: "",
-      telefono: "",
-      cuenta_id: "",
-    }); // Limpiar los campos
+      cedula: "",
+      name: "",
+      email: "",
+      password: "",
+      phone: "",
+    });
+    setErrors({});
     setOpen(true);
   };
 
@@ -54,46 +105,55 @@ function ClientsCrud() {
   const handleClose = () => {
     setOpen(false);
     setNewClient({
-      id: null,
-      nombre: "",
-      apellido: "",
-      correo: "",
-      telefono: "",
-      cuenta_id: "",
-    }); // Limpiar los campos al cerrar
+      cedula: "",
+      name: "",
+      email: "",
+      password: "",
+      phone: "",
+    });
+    setErrors({});
   };
 
-  // Función para manejar el envío del formulario (añadir o editar)
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!validate()) return;
+
     if (editing) {
-      // Editar cliente
-      const updatedRows = rows.map((row) =>
-        row.id === newClient.id ? { ...row, ...newClient } : row
-      );
-      setRows(updatedRows);
+      // Actualizar cliente
+      await ClientService.updateClient(newClient);
+      console.log("Cliente actualizado:", newClient);
     } else {
       // Añadir nuevo cliente
-      const newRow = {
-        ...newClient,
-        id: rows.length + 1, // Suponiendo que el ID es automático
-      };
-      setRows([...rows, newRow]);
+      await ClientService.createClient(newClient);
+      console.log("Cliente añadido:", newClient);
     }
     handleClose();
+    fetchClients(); // Recargar la lista de clientes
   };
 
-  // Función para manejar la eliminación de un cliente
-  const handleDelete = (id) => {
-    const updatedRows = rows.filter((row) => row.id !== id);
-    setRows(updatedRows);
-  };
-
-  // Función para manejar la edición de un cliente
-  const handleEdit = (id) => {
-    const clientToEdit = rows.find((row) => row.id === id);
+  const handleEdit = (cedula) => {
+    const clientToEdit = rows.find((row) => row.cedula === cedula);
     setNewClient(clientToEdit);
-    setEditing(true); // Establecer que estamos editando
-    setOpen(true); // Abrir el modal
+    setEditing(true);
+    setErrors({});
+    setOpen(true);
+  };
+
+  const handleDelete = (cedula) => {
+    setClientToDelete(cedula);
+    setOpenConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    // Eliminar cliente
+    await ClientService.deleteClient(clientToDelete);
+    console.log("Cliente eliminado:", clientToDelete);
+    setOpenConfirm(false);
+    fetchClients(); // Recargar la lista de clientes
+  };
+
+  const cancelDelete = () => {
+    setOpenConfirm(false);
+    setClientToDelete(null);
   };
 
   return (
@@ -103,20 +163,18 @@ function ClientsCrud() {
         variant="contained"
         color="primary"
         onClick={handleAddClient}
-        style={{ marginBottom: "16px" }}
+        style={{ marginBottom: "16px", textTransform: "none" }}
       >
-        Añadir Cliente
-      </Button>
+        Añadir cliente
+      </StyledButton>
 
-      {/* Tabla de clientes */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
               <TableCell>Nombre</TableCell>
-              <TableCell>Apellido</TableCell>
-              <TableCell>Correo</TableCell>
+              <TableCell>Email</TableCell>
               <TableCell>Teléfono</TableCell>
               <TableCell>Cuenta ID</TableCell>
               <TableCell>Acciones</TableCell>
@@ -124,13 +182,11 @@ function ClientsCrud() {
           </TableHead>
           <TableBody>
             {rows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.id}</TableCell>
-                <TableCell>{row.nombre}</TableCell>
-                <TableCell>{row.apellido}</TableCell>
-                <TableCell>{row.correo}</TableCell>
-                <TableCell>{row.telefono}</TableCell>
-                <TableCell>{row.cuenta_id}</TableCell>
+              <TableRow key={row.cedula}>
+                <TableCell>{row.cedula}</TableCell>
+                <TableCell>{row.name}</TableCell>
+                <TableCell>{row.email}</TableCell>
+                <TableCell>{row.phone}</TableCell>
                 <TableCell>
                   <IconButton color="primary" onClick={() => handleEdit(row.id)}>
                     <EditIcon />
@@ -145,63 +201,99 @@ function ClientsCrud() {
         </Table>
       </TableContainer>
 
-      {/* Modal para añadir o editar un cliente */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{editing ? "Editar Cliente" : "Añadir Nuevo Cliente"}</DialogTitle>
+      <StyledDialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        <DialogTitle
+          sx={{
+            textAlign: "center",
+            fontWeight: "bold",
+            color: theme.palette.mode === "dark" ? "#fff" : "#000",
+          }}
+        >
+          {editing ? "Editar Cliente" : "Añadir Nuevo Cliente"}
+        </DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="nombre"
-            label="Nombre"
-            fullWidth
-            variant="outlined"
-            value={newClient.nombre}
-            onChange={(e) => setNewClient({ ...newClient, nombre: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="apellido"
-            label="Apellido"
-            fullWidth
-            variant="outlined"
-            value={newClient.apellido}
-            onChange={(e) => setNewClient({ ...newClient, apellido: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="correo"
-            label="Correo"
-            fullWidth
-            variant="outlined"
-            value={newClient.correo}
-            onChange={(e) => setNewClient({ ...newClient, correo: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="telefono"
-            label="Teléfono"
-            fullWidth
-            variant="outlined"
-            value={newClient.telefono}
-            onChange={(e) => setNewClient({ ...newClient, telefono: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="cuenta_id"
-            label="Cuenta ID"
-            fullWidth
-            variant="outlined"
-            value={newClient.cuenta_id}
-            onChange={(e) => setNewClient({ ...newClient, cuenta_id: e.target.value })}
-          />
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, paddingTop: 2 }}>
+            <TextField
+              label="Cédula"
+              variant="outlined"
+              fullWidth
+              value={newClient.cedula}
+              error={!!errors.cedula}
+              helperText={errors.cedula}
+              onChange={(e) => setNewClient({ ...newClient, cedula: e.target.value })}
+            />
+            <TextField
+              label="Nombre"
+              variant="outlined"
+              fullWidth
+              value={newClient.name}
+              error={!!errors.name}
+              helperText={errors.name}
+              onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
+            />
+            <TextField
+              label="Email"
+              variant="outlined"
+              fullWidth
+              value={newClient.email}
+              error={!!errors.email}
+              helperText={errors.email}
+              onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
+            />
+            <TextField
+              label="Contraseña"
+              variant="outlined"
+              fullWidth
+              type="password"
+              value={newClient.password}
+              error={!!errors.password}
+              helperText={errors.password}
+              onChange={(e) => setNewClient({ ...newClient, password: e.target.value })}
+            />
+            <TextField
+              label="Teléfono"
+              variant="outlined"
+              fullWidth
+              value={newClient.phone}
+              error={!!errors.phone}
+              helperText={errors.phone}
+              onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
+            />
+          </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
+        <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
+          <Button 
+            onClick={handleClose} 
+            variant="outlined" 
+            color="secondary"
+            style={{ textTransform: "none" }} 
+          >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} color="primary">
+          <Button 
+            onClick={handleSubmit} 
+            variant="contained" 
+            color="primary"
+            style={{ textTransform: "none" }} 
+          >
             {editing ? "Guardar Cambios" : "Añadir"}
+          </Button>
+        </DialogActions>
+      </StyledDialog>
+
+      <Dialog open={openConfirm} onClose={cancelDelete}>
+        <DialogTitle sx={{ color: theme.palette.mode === "dark" ? "#fff" : "#000" }}>
+          Confirmar eliminación
+        </DialogTitle>
+        <DialogContent>
+          ¿Estás seguro de que deseas eliminar este cliente?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelDelete} variant="outlined" color="secondary" style={{ textTransform: "none" }}>
+            Cancelar
+          </Button>
+          <Button onClick={confirmDelete} variant="contained" color="error" style={{ textTransform: "none" }}>
+            Eliminar
           </Button>
         </DialogActions>
       </Dialog>
@@ -210,3 +302,4 @@ function ClientsCrud() {
 }
 
 export default ClientsCrud;
+

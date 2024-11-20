@@ -17,47 +17,92 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { styled } from "@mui/system";
+import ServiceService from "../CrudAdmin/Services/ServiceService";
 
-export default function ServicesTable() {
-  const [rows, setRows] = React.useState([
-    { id: 1, name: "Corte de cabello", price: "$10", description: "un fade", state: "Activo" },
-    { id: 2, name: "Afeitado", price: "$8", description: "x", state: "Activo" },
-    { id: 3, name: "Tinte", price: "$15", description: "un cambio de color de cabello", state: "Activo" },
-  ]);
-  
+const StyledButton = styled(Button)(({ theme }) => ({
+  background: theme.palette.mode === "dark"
+    ? "linear-gradient(to right, #6a11cb, #2575fc)"
+    : "linear-gradient(to right, #2575fc, #6a11cb)",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  "&:hover": {
+    background: theme.palette.mode === "dark"
+      ? "linear-gradient(to right, #5a0dba, #1f60d0)"
+      : "linear-gradient(to right, #1f60d0, #5a0dba)",
+  },
+  textTransform: "none", // Desactivar mayúsculas predeterminadas
+}));
+
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  "& .MuiDialog-paper": {
+    borderRadius: "20px",
+    padding: theme.spacing(3),
+    background: theme.palette.mode === "dark"
+      ? "linear-gradient(to right, #1e1e1e, #252525)"
+      : "linear-gradient(to right, #ffffff, #f7f9fc)",
+    boxShadow: theme.palette.mode === "dark"
+      ? "0px 4px 20px rgba(255, 255, 255, 0.1)"
+      : "0px 4px 20px rgba(0, 0, 0, 0.1)",
+  },
+}));
+
+function ServicesCrud() {
+  const theme = useTheme();
+
+  const [rows, setRows] = React.useState([]);
   const [open, setOpen] = React.useState(false);
-  const [newService, setNewService] = React.useState({ id: null, name: "", price: "", description: "", state: "" });
-  const [editing, setEditing] = React.useState(false); // Control si es un servicio nuevo o uno que se está editando
+  const [openConfirm, setOpenConfirm] = React.useState(false);
+  const [serviceToDelete, setServiceToDelete] = React.useState(null);
+  const [newService, setNewService] = React.useState({ id: null, name: "", price: "", duration: "" });
+  const [editing, setEditing] = React.useState(false);
+  const [errors, setErrors] = React.useState({});
 
-  // Función para manejar el evento de añadir servicio
+  // Cargar servicios desde el backend
+  const fetchServices = async () => {
+    const services = await ServiceService.getServices();
+    setRows(services);
+  };
+
+  React.useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const validate = () => {
+    let temp = {};
+    temp.name = newService.name ? "" : "El nombre es obligatorio.";
+    temp.price = newService.price ? "" : "El precio es obligatorio.";
+    temp.duration = newService.duration ? "" : "La duración es obligatoria.";
+    setErrors(temp);
+    return Object.values(temp).every((x) => x === "");
+  };
+
   const handleAddService = () => {
-    setEditing(false); // Asegurarse de que está en modo de añadir
-    setNewService({ id: null, name: "", price: "", description: "", state: "" }); // Limpiar los campos
+    setEditing(false);
+    setNewService({ id: null, name: "", price: "", duration: "" });
+    setErrors({});
     setOpen(true);
   };
 
   // Función para cerrar el modal
   const handleClose = () => {
     setOpen(false);
-    setNewService({ id: null, name: "", price: "", description: "", state: "" }); // Limpiar los campos al cerrar
+    setNewService({ id: null, name: "", price: "", duration: "" });
+    setErrors({});
   };
 
-  // Función para manejar el envío del formulario (añadir o editar)
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!validate()) return;
+
     if (editing) {
-      // Editar servicio
-      const updatedRows = rows.map((row) =>
-        row.id === newService.id ? { ...row, ...newService } : row
-      );
-      setRows(updatedRows);
+      await ServiceService.updateService(newService);
     } else {
-      // Añadir nuevo servicio
-      const newRow = {
-        ...newService,
-        id: rows.length + 1, // Suponiendo que el ID es automático
-      };
-      setRows([...rows, newRow]);
+      await ServiceService.createService(newService);
     }
+    fetchServices();
     handleClose();
   };
 
@@ -71,14 +116,30 @@ export default function ServicesTable() {
   const handleEdit = (id) => {
     const serviceToEdit = rows.find((row) => row.id === id);
     setNewService(serviceToEdit);
-    setEditing(true); // Establecer que estamos editando
-    setOpen(true); // Abrir el modal
+    setEditing(true);
+    setErrors({});
+    setOpen(true);
+  };
+
+  const handleDelete = (id) => {
+    setServiceToDelete(id);
+    setOpenConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    await ServiceService.deleteService(serviceToDelete);
+    fetchServices();
+    setOpenConfirm(false);
+  };
+
+  const cancelDelete = () => {
+    setOpenConfirm(false);
+    setServiceToDelete(null);
   };
 
   return (
     <div style={{ padding: "16px" }}>
-      {/* Botón para añadir nuevo servicio */}
-      <Button
+      <StyledButton
         variant="contained"
         color="primary"
         onClick={handleAddService}
@@ -87,14 +148,13 @@ export default function ServicesTable() {
         Añadir Servicio
       </Button>
 
-      {/* Tabla de servicios */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell>Nombre del Servicio</TableCell>
-              <TableCell>Descripción</TableCell>
+              <TableCell>Nombre</TableCell>
+              <TableCell>Duración</TableCell>
               <TableCell>Precio</TableCell>
               <TableCell>Estado</TableCell>
               <TableCell>Acciones</TableCell>
@@ -105,7 +165,7 @@ export default function ServicesTable() {
               <TableRow key={row.id}>
                 <TableCell>{row.id}</TableCell>
                 <TableCell>{row.name}</TableCell>
-                <TableCell>{row.description}</TableCell>
+                <TableCell>{row.duration}</TableCell>
                 <TableCell>{row.price}</TableCell>
                 <TableCell>{row.state}</TableCell>
                 <TableCell>
@@ -122,59 +182,85 @@ export default function ServicesTable() {
         </Table>
       </TableContainer>
 
-      {/* Modal para añadir o editar un servicio */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{editing ? "Editar Servicio" : "Añadir Nuevo Servicio"}</DialogTitle>
+      <StyledDialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        <DialogTitle
+          sx={{
+            textAlign: "center",
+            fontWeight: "bold",
+            color: theme.palette.mode === "dark" ? "#fff" : "#000",
+          }}
+        >
+          {editing ? "Editar Servicio" : "Añadir Nuevo Servicio"}
+        </DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Nombre del Servicio"
-            fullWidth
-            variant="outlined"
-            value={newService.name}
-            onChange={(e) => setNewService({ ...newService, name: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="price"
-            label="Precio"
-            fullWidth
-            variant="outlined"
-            value={newService.price}
-            onChange={(e) => setNewService({ ...newService, price: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="description"
-            label="Descripción"
-            fullWidth
-            variant="outlined"
-            multiline
-            rows={4}
-            value={newService.description}
-            onChange={(e) => setNewService({ ...newService, description: e.target.value })}
-          />
-          <TextField
-            margin="dense"
-            id="state"
-            label="Estado"
-            fullWidth
-            variant="outlined"
-            value={newService.state}
-            onChange={(e) => setNewService({ ...newService, state: e.target.value })}
-          />
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, paddingTop: 2 }}>
+            <TextField
+              label="Nombre"
+              variant="outlined"
+              fullWidth
+              value={newService.name}
+              error={!!errors.name}
+              helperText={errors.name}
+              onChange={(e) => setNewService({ ...newService, name: e.target.value })}
+            />
+            <TextField
+              label="Precio"
+              variant="outlined"
+              fullWidth
+              value={newService.price}
+              error={!!errors.price}
+              helperText={errors.price}
+              onChange={(e) => setNewService({ ...newService, price: e.target.value })}
+            />
+            <TextField
+              label="Duración"
+              variant="outlined"
+              fullWidth
+              value={newService.duration}
+              error={!!errors.duration}
+              helperText={errors.duration}
+              onChange={(e) => setNewService({ ...newService, duration: e.target.value })}
+            />
+          </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
+        <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
+          <Button 
+            onClick={handleClose} 
+            variant="outlined" 
+            color="secondary"
+            style={{ textTransform: "none" }}
+          >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} color="primary">
+          <Button 
+            onClick={handleSubmit} 
+            variant="contained" 
+            color="primary"
+            style={{ textTransform: "none" }}
+          >
             {editing ? "Guardar Cambios" : "Añadir"}
+          </Button>
+        </DialogActions>
+      </StyledDialog>
+
+      <Dialog open={openConfirm} onClose={cancelDelete}>
+        <DialogTitle sx={{ color: theme.palette.mode === "dark" ? "#fff" : "#000" }}>
+          Confirmar Eliminación
+        </DialogTitle>
+        <DialogContent>
+          ¿Estás seguro de que deseas eliminar este servicio?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelDelete} color="primary" style={{ textTransform: "none" }}>
+            Cancelar
+          </Button>
+          <Button onClick={confirmDelete} color="error" style={{ textTransform: "none" }}>
+            Eliminar
           </Button>
         </DialogActions>
       </Dialog>
     </div>
   );
 }
+
+export default ServicesCrud
