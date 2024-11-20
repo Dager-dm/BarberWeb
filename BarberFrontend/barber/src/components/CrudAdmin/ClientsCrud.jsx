@@ -18,7 +18,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { styled } from "@mui/system";
-import ClientService from "./Services/ClientService"; 
+import ClientService from "../../services/ClientService"; 
 
 const StyledButton = styled(Button)(({ theme }) => ({
   background: theme.palette.mode === "dark"

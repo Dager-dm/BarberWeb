@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import EmployeeService from "../CrudAdmin/Services/EmployeeService"; // Importa el servicio
+import EmployeeService from "../../services/EmployeeService"; // Importa el servicio
 import {
   Button,
   Table,
@@ -69,6 +69,8 @@ function EmployeesCrud() {
     name: "",
     phone: "",
     cargo: "",
+    email: "",
+    password: "", // Campos de email y password
   }); // Nuevo empleado
   const [editing, setEditing] = useState(false); // Si estamos editando o creando un nuevo empleado
   const [errors, setErrors] = useState({}); // Errores de validación
@@ -89,6 +91,10 @@ function EmployeesCrud() {
     temp.name = newEmployee.name ? "" : "El nombre es obligatorio.";
     temp.phone = newEmployee.phone ? "" : "El teléfono es obligatorio.";
     temp.cargo = newEmployee.cargo ? "" : "El cargo es obligatorio.";
+    if (newEmployee.cargo === "Cajero") {
+      temp.email = newEmployee.email ? "" : "El correo es obligatorio.";
+      temp.password = newEmployee.password ? "" : "La contraseña es obligatoria.";
+    }
     setErrors(temp);
     return Object.values(temp).every((x) => x === "");
   };
@@ -96,7 +102,7 @@ function EmployeesCrud() {
   // Evento para añadir nuevo empleado
   const handleAddEmployee = () => {
     setEditing(false);
-    setNewEmployee({ cedula: "", name: "", phone: "", cargo: "" });
+    setNewEmployee({ cedula: "", name: "", phone: "", cargo: "", email: "", password: "" });
     setErrors({});
     setOpen(true);
   };
@@ -104,7 +110,7 @@ function EmployeesCrud() {
   // Evento para cerrar el modal
   const handleClose = () => {
     setOpen(false);
-    setNewEmployee({ cedula: "", name: "", phone: "", cargo: "" });
+    setNewEmployee({ cedula: "", name: "", phone: "", cargo: "", email: "", password: "" });
     setErrors({});
   };
 
@@ -252,20 +258,45 @@ function EmployeesCrud() {
               </Select>
               {errors.cargo && <p style={{ color: "red" }}>{errors.cargo}</p>}
             </FormControl>
+
+            {/* Mostrar campos de correo y contraseña solo si el cargo es Cajero */}
+            {newEmployee.cargo === "Cajero" && (
+              <>
+                <TextField
+                  label="Correo"
+                  variant="outlined"
+                  fullWidth
+                  value={newEmployee.email}
+                  error={!!errors.email}
+                  helperText={errors.email}
+                  onChange={(e) => setNewEmployee({ ...newEmployee, email: e.target.value })}
+                />
+                <TextField
+                  label="Contraseña"
+                  variant="outlined"
+                  fullWidth
+                  type="password"
+                  value={newEmployee.password}
+                  error={!!errors.password}
+                  helperText={errors.password}
+                  onChange={(e) => setNewEmployee({ ...newEmployee, password: e.target.value })}
+                />
+              </>
+            )}
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
-          <Button 
-            onClick={handleClose} 
-            variant="outlined" 
+          <Button
+            onClick={handleClose}
+            variant="outlined"
             color="secondary"
             style={{ textTransform: "none" }}
           >
             Cancelar
           </Button>
-          <Button 
-            onClick={handleSubmit} 
-            variant="contained" 
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
             color="primary"
             style={{ textTransform: "none" }}
           >
