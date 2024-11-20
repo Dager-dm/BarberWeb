@@ -18,7 +18,7 @@ public class Usuario {
     private Long id;
     private String contraseña;
     private String correo;
-    private String usuario;
+    @Enumerated(EnumType.STRING)
     private TipoCuenta tipocuenta;
     @Enumerated(EnumType.STRING)
     private EstadoCrud estado;
