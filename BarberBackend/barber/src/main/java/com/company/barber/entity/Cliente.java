@@ -2,6 +2,7 @@ package com.company.barber.entity;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Cliente extends Persona {
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
     @OneToMany(mappedBy = "id")
