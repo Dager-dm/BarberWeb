@@ -75,13 +75,17 @@ function EmployeesCrud() {
   }); // Nuevo empleado
   const [editing, setEditing] = useState(false); // Si estamos editando o creando un nuevo empleado
   const [errors, setErrors] = useState({}); // Errores de validación
-
+  const employeeService = new EmployeeService();
   // Cargar empleados al cargar el componente
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      const employees = await EmployeeService.getEmployees();
-      setRows(employees);
-    };
+  const fetchEmployees = async () => {
+    employeeService.getEmployees().then(employee => {
+      console.log('Empleados:', employee);
+      setRows(Array.isArray(employee) ? employee : []);
+    }).catch(error => {
+      console.error('Error:', error);
+    });
+  };
+  React.useEffect(() => {
     fetchEmployees();
   }, []);
 
@@ -120,20 +124,20 @@ function EmployeesCrud() {
     if (!validate()) return;
 
     if (editing) {
-      await EmployeeService.updateEmployee(newEmployee);
+      console.log(await employeeService.updateEmployee(newEmployee));
     } else {
-      await EmployeeService.createEmployee(newEmployee);
+      console.log(await employeeService.addEmployee(newEmployee));
     }
 
     // Refrescar la lista de empleados
-    const updatedEmployees = await EmployeeService.getEmployees();
+    const updatedEmployees = await employeeService.getEmployees();
     setRows(updatedEmployees);
     handleClose();
   };
 
   // Evento para editar un empleado
-  const handleEdit = (cedula) => {
-    const employeeToEdit = rows.find((row) => row.cedula === cedula);
+  const handleEdit = (id) => {
+    const employeeToEdit = rows.find((row) => row.id === id);
     setNewEmployee(employeeToEdit);
     setEditing(true);
     setErrors({});
@@ -141,15 +145,16 @@ function EmployeesCrud() {
   };
 
   // Evento para eliminar un empleado
-  const handleDelete = (cedula) => {
-    setEmployeeToDelete(cedula);
+  const handleDelete = (id) => {
+    const employeeToD = rows.find((row) => row.id === id);
+    setEmployeeToDelete(employeeToD);
     setOpenConfirm(true);
   };
 
   // Confirmar la eliminación del empleado
   const confirmDelete = async () => {
-    await EmployeeService.deleteEmployee(employeeToDelete);
-    const updatedEmployees = await EmployeeService.getEmployees();
+    console.log(await employeeService.deleteEmployee(employeeToDelete));
+    const updatedEmployees = await employeeService.getEmployees();
     setRows(updatedEmployees);
     setOpenConfirm(false);
   };
@@ -186,14 +191,14 @@ function EmployeesCrud() {
             {rows.map((row) => (
               <TableRow key={row.cedula}>
                 <TableCell>{row.cedula}</TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.phone}</TableCell>
+                <TableCell>{row.nombre}</TableCell>
+                <TableCell>{row.telefono}</TableCell>
                 <TableCell>{row.cargo}</TableCell>
                 <TableCell>
-                  <IconButton color="primary" onClick={() => handleEdit(row.cedula)}>
+                  <IconButton color="primary" onClick={() => handleEdit(row.id)}>
                     <EditIcon />
                   </IconButton>
-                  <IconButton color="error" onClick={() => handleDelete(row.cedula)}>
+                  <IconButton color="error" onClick={() => handleDelete(row.id)}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>

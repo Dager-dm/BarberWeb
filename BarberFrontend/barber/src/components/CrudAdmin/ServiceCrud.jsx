@@ -22,6 +22,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { styled } from "@mui/system";
 import ServiceService from "../../services/ServiceService";
+import { Duration } from 'luxon';
 
 const StyledButton = styled(Button)(({ theme }) => ({
   background: theme.palette.mode === "dark"
@@ -63,11 +64,24 @@ function ServicesCrud() {
   const [newService, setNewService] = React.useState({ id: null, name: "", price: "", duration: "" });
   const [editing, setEditing] = React.useState(false);
   const [errors, setErrors] = React.useState({});
+  const SeService = new ServiceService();
+
+  const convertirDurationAMinutos = (duration) => {
+    const duracion = Duration.fromISO(duration);
+    return duracion.as('minutes');
+  };
+
+
+
+
 
   // Cargar servicios desde el backend
   const fetchServices = async () => {
-    const services = await ServiceService.getServices();
-    setRows(services);
+    SeService.getServices().then(service => {
+      setRows(Array.isArray(service) ? service : []);
+    }).catch(error => {
+      console.error('Error:', error);
+    });
   };
 
   React.useEffect(() => {
@@ -100,9 +114,9 @@ function ServicesCrud() {
     if (!validate()) return;
 
     if (editing) {
-      await ServiceService.updateService(newService);
+      await SeService.updateService(newService);
     } else {
-      await ServiceService.createService(newService);
+      await SeService.addService(newService);
     }
     fetchServices();
     handleClose();
@@ -122,7 +136,7 @@ function ServicesCrud() {
   };
 
   const confirmDelete = async () => {
-    await ServiceService.deleteService(serviceToDelete);
+    await SeService.deleteService(serviceToDelete);
     fetchServices();
     setOpenConfirm(false);
   };
@@ -158,9 +172,9 @@ function ServicesCrud() {
             {rows.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.id}</TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.duration}</TableCell>
-                <TableCell>{row.price}</TableCell>
+                <TableCell>{row.nombre}</TableCell>
+                <TableCell>{convertirDurationAMinutos(row.duracion)} min</TableCell>
+                <TableCell>${row.precio}</TableCell>
                 <TableCell>
                   <IconButton color="primary" onClick={() => handleEdit(row.id)}>
                     <EditIcon />
@@ -217,17 +231,17 @@ function ServicesCrud() {
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
-          <Button 
-            onClick={handleClose} 
-            variant="outlined" 
+          <Button
+            onClick={handleClose}
+            variant="outlined"
             color="secondary"
             style={{ textTransform: "none" }}
           >
             Cancelar
           </Button>
-          <Button 
-            onClick={handleSubmit} 
-            variant="contained" 
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
             color="primary"
             style={{ textTransform: "none" }}
           >

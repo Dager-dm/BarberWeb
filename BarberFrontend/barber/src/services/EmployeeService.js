@@ -1,35 +1,121 @@
 
 class EmployeeService {
-    static baseUrl = 'http://localhost:5000/api/employees'; // Cambia esta URL por la del backend real
-  
-    // Obtener todos los empleados
-    static async getEmployees() {
-      // Vacío: Aquí iría la lógica para obtener empleados desde el backend.
-      console.log("Cargar empleados (vacío)");
-      return []; // Retorna una lista vacía por ahora
+  constructor() {
+      this.baseURL = "http://localhost:8082";
+  }
+  static transformEmployeeData(Employee) {
+    const employeeData = { 
+        nombre: Employee.name, 
+        telefono: Employee.phone, 
+        cedula: Employee.cedula, 
+        estado: "Habilitado",
+        cargo: Employee.cargo
+    };
+    // Asignar el objeto usuario solo si el cargo es "cajero"
+    if (Employee.cargo === "Cajero") {
+        employeeData.usuario = { 
+            correo: Employee.email, 
+            contraseña: Employee.password, 
+            tipocuenta: "empleado",
+            estado: "Habilitado"
+        };
     }
+    return employeeData;
+}
+
+
+  async getEmployees() {
+      try {
+          const response = await fetch(`${this.baseURL}/empleados`, {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          });
+          return await response.json();
+      } catch (error) {
+          console.error('Error fetching Employees:', error);
+          throw error;
+      }
+  }
+
+  async getEmployeeById(EmployeeId) {
+      try {
+          const response = await fetch(`${this.baseURL}/empleados/${EmployeeId}`, {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          });
+          return await response.json();
+      } catch (error) {
+          console.error(`Error fetching Employee with ID ${EmployeeId}:`, error);
+          throw error;
+      }
+  }
+
+  async addEmployee(Employee) { 
+      const Employeee = EmployeeService.transformEmployeeData(Employee);
+      const cargo = (Employee.cargo == 'Cajero') ? 'cajeros' : 'barberos';
+      try {
+          const response = await fetch(`${this.baseURL}/${cargo}`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(Employeee)
+          });
+          return await response.json();
+      } catch (error) {
+          console.error('Error adding Employee:', error);
+          throw error;
+      }
+  }
+
+  async updateEmployee(Employee) {
+    const Employeee = EmployeeService.transformEmployeeData(Employee);
+    const cargo = (Employee.cargo == 'Cajero') ? 'cajeros' : 'barberos';
+      try {
+          const response = await fetch("http://localhost:8082/"+cargo+"/"+Employee.id, {
+              method: 'PUT',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(Employeee)
+          });
+          return await response.json();
+      } catch (error) {
+          console.error(`Error updating Employee with ID ${Employeee}:`, error);
+          throw error;
+      }
+  }
+
+  async deleteEmployee(Employee) {
+    const Employeee = EmployeeService.transformEmployeeData(Employee);
+    const cargo = (Employee.cargo == 'Cajero') ? 'cajeros' : 'barberos';
+      try {
+          const response = await fetch(`${this.baseURL}/${cargo}/${Employee.id}`, {
+              method: 'DELETE',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          });
   
-    // Crear un nuevo empleado
-    static async createEmployee(employee) {
-      // Vacío: Aquí iría la lógica para crear un nuevo empleado en el backend.
-      console.log("Añadir empleado (vacío):", employee);
-      return employee; // Retorna el mismo empleado como ejemplo
-    }
-  
-    // Actualizar un empleado
-    static async updateEmployee(employee) {
-      // Vacío: Aquí iría la lógica para actualizar un empleado en el backend.
-      console.log("Actualizar empleado (vacío):", employee);
-      return employee; // Retorna el empleado actualizado como ejemplo
-    }
-  
-    // Eliminar un empleado
-    static async deleteEmployee(cedula) {
-      // Vacío: Aquí iría la lógica para eliminar un empleado en el backend.
-      console.log("Eliminar empleado (vacío):", cedula);
-      return { cedula }; // Retorna el id del empleado eliminado como ejemplo
-    }
+          // Verificar si la respuesta es JSON
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.includes('application/json')) {
+              return await response.json();
+          } else {
+              const text = await response.text();
+              console.log(text); // Manejar la respuesta de texto
+              return { message: text };
+          }
+      } catch (error) {
+          console.error(`Error deleting Employee with ID ${Employeee}:`, error);
+          throw error;
+      }
   }
   
-  export default EmployeeService;
-  
+}
+
+export default EmployeeService;
