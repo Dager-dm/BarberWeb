@@ -33,6 +33,8 @@ public class ClienteService implements ICrud<Cliente> {
         cliente.setCortes(updatedEntity.getCortes());
         cliente.setNombre(updatedEntity.getNombre());
         cliente.setTelefono(updatedEntity.getTelefono());
+        cliente.getUsuario().setCorreo(updatedEntity.getUsuario().getCorreo());
+        cliente.getUsuario().setContraseña(updatedEntity.getUsuario().getContraseña());
         return clienterepository.save(cliente);
     }
 

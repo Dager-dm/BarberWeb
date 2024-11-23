@@ -34,6 +34,8 @@ public class CajeroService implements ICrud<Cajero> {
         cajero.setCargo(updatedEntity.getCargo());
         cajero.setNombre(updatedEntity.getNombre());
         cajero.setTelefono(updatedEntity.getTelefono());
+        cajero.getUsuario().setCorreo(updatedEntity.getUsuario().getCorreo());
+        cajero.getUsuario().setContraseña(updatedEntity.getUsuario().getContraseña());
         return cajerorepository.save(cajero);
     }
 

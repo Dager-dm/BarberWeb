@@ -21,7 +21,9 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { styled } from "@mui/system";
-import ClientService from "../../services/ClientService"; 
+import ClientService from "../../services/ClientService";
+
+
 
 const StyledButton = styled(Button)(({ theme }) => ({
   background: theme.palette.mode === "dark"
@@ -68,14 +70,16 @@ function ClientsCrud() {
   });
   const [editing, setEditing] = React.useState(false);
   const [errors, setErrors] = React.useState({});
-
+  const clientService = new ClientService();
   // Cargar clientes desde el backend
   const fetchClients = async () => {
-    const clients = await ClientService.getClients();
-    setRows(clients);
-    console.log("Clientes cargados:", clients);
+    clientService.getClientes().then(clientes => {
+      console.log('Clientes:', clientes);
+      setRows(Array.isArray(clientes) ? clientes : []);
+    }).catch(error => {
+      console.error('Error:', error);
+    });
   };
-
   React.useEffect(() => {
     fetchClients();
   }, []);
@@ -121,19 +125,17 @@ function ClientsCrud() {
 
     if (editing) {
       // Actualizar cliente
-      await ClientService.updateClient(newClient);
-      console.log("Cliente actualizado:", newClient);
+      console.log(await clientService.updateCliente(newClient));
     } else {
       // Añadir nuevo cliente
-      await ClientService.createClient(newClient);
-      console.log("Cliente añadido:", newClient);
+      console.log(await clientService.addCliente(newClient));
     }
     handleClose();
     fetchClients(); // Recargar la lista de clientes
   };
 
-  const handleEdit = (cedula) => {
-    const clientToEdit = rows.find((row) => row.cedula === cedula);
+  const handleEdit = (id) => {
+    const clientToEdit = rows.find((row) => row.id === id);
     setNewClient(clientToEdit);
     setEditing(true);
     setErrors({});
@@ -147,8 +149,7 @@ function ClientsCrud() {
 
   const confirmDelete = async () => {
     // Eliminar cliente
-    await ClientService.deleteClient(clientToDelete);
-    console.log("Cliente eliminado:", clientToDelete);
+    console.log(await clientService.deleteCliente(clientToDelete));
     setOpenConfirm(false);
     fetchClients(); // Recargar la lista de clientes
   };
@@ -184,20 +185,21 @@ function ClientsCrud() {
             {rows.map((row) => (
               <TableRow key={row.cedula}>
                 <TableCell>{row.cedula}</TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell>{row.phone}</TableCell>
+                <TableCell>{row.nombre}</TableCell>
+                <TableCell>{row.usuario.correo}</TableCell>
+                <TableCell>{row.telefono}</TableCell>
                 <TableCell>
-                  <IconButton color="primary" onClick={() => handleEdit(row.cedula)}>
+                  <IconButton color="primary" onClick={() => handleEdit(row.id)}>
                     <EditIcon />
                   </IconButton>
-                  <IconButton color="error" onClick={() => handleDelete(row.cedula)}>
+                  <IconButton color="error" onClick={() => handleDelete(row.id)}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
+
         </Table>
       </TableContainer>
 
@@ -262,19 +264,19 @@ function ClientsCrud() {
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
-          <Button 
-            onClick={handleClose} 
-            variant="outlined" 
+          <Button
+            onClick={handleClose}
+            variant="outlined"
             color="secondary"
-            style={{ textTransform: "none" }} 
+            style={{ textTransform: "none" }}
           >
             Cancelar
           </Button>
-          <Button 
-            onClick={handleSubmit} 
-            variant="contained" 
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
             color="primary"
-            style={{ textTransform: "none" }} 
+            style={{ textTransform: "none" }}
           >
             {editing ? "Guardar Cambios" : "Añadir"}
           </Button>

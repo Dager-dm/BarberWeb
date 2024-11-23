@@ -1,36 +1,117 @@
+
 class ClientService {
-    static baseUrl = "http://localhost:5000/api/clients"; // Cambia esta URL por la del backend real
-  
-    // Obtener todos los clientes
-    static async getClients() {
-      console.log("Cargar clientes (vacío)");
-      return []; // Retorna una lista vacía por ahora
+    constructor() {
+        this.baseURL = "http://localhost:8082";
+    }
+    static transformClientData(client) {
+         return { 
+            nombre: client.name, 
+            telefono: client.phone, 
+            cedula: client.cedula, 
+            estado: "Habilitado",
+            usuario: { 
+                correo: client.email, 
+                contraseña: client.password, 
+                tipocuenta: "cliente" ,
+                estado: "Habilitado"
+            } 
+        }; 
     }
   
-    // Obtener un cliente por cédula
-    static async getClientByCedula(cedula) {
-      console.log("Obtener cliente (vacío) por cédula:", cedula);
-      return {}; // Retorna un objeto vacío por ahora
+    async getClientes() {
+        try {
+            const response = await fetch(`${this.baseURL}/clientes`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching clients:', error);
+            throw error;
+        }
     }
-  
-    // Crear un nuevo cliente
-    static async createClient(client) {
-      console.log("Añadir cliente (vacío):", client);
-      return client; // Retorna el cliente como ejemplo
+
+    async getClienteById(clienteId) {
+        try {
+            const response = await fetch(`${this.baseURL}/clientes/${clienteId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            return await response.json();
+        } catch (error) {
+            console.error(`Error fetching client with ID ${clienteId}:`, error);
+            throw error;
+        }
     }
-  
-    // Actualizar un cliente
-    static async updateClient(client) {
-      console.log("Actualizar cliente (vacío):", client);
-      return client; // Retorna el cliente actualizado como ejemplo
+
+    async addCliente(client) {
+       
+        const cliente = ClientService.transformClientData(client);
+        console.log("console log cliente:"+cliente)
+        console.log("console log json:"+JSON.stringify(cliente));
+        console.log("console log client:"+client);
+        try {
+            const response = await fetch(`${this.baseURL}/clientes`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cliente)
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error adding client:', error);
+            throw error;
+        }
     }
-  
-    // Eliminar un cliente
-    static async deleteClient(cedula) {
-      console.log("Eliminar cliente (vacío):", cedula);
-      return { cedula }; // Retorna el cedula del cliente eliminado como ejemplo
+
+    async updateCliente(client) {
+        //const id = Number(cliente.id);
+        const cliente = ClientService.transformClientData(client);
+        try {
+            const response = await fetch("http://localhost:8082/clientes/"+client.id, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(cliente)
+            });
+            return await response.json();
+        } catch (error) {
+            console.error(`Error updating client with ID ${cliente}:`, error);
+            throw error;
+        }
     }
-  }
-  
-  export default ClientService;
-  
+
+    async deleteCliente(cliente) {
+        const id = Number(cliente);
+        try {
+            const response = await fetch(`${this.baseURL}/clientes/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            // Verificar si la respuesta es JSON
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return await response.json();
+            } else {
+                const text = await response.text();
+                console.log(text); // Manejar la respuesta de texto
+                return { message: text };
+            }
+        } catch (error) {
+            console.error(`Error deleting client with ID ${cliente}:`, error);
+            throw error;
+        }
+    }
+    
+}
+
+export default ClientService;
