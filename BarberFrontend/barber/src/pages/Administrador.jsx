@@ -14,6 +14,8 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ServicesTable from "../components/CrudAdmin/ServiceCrud.jsx";
 import EmployeesTable from "../components/CrudAdmin/EmployeesCrud.jsx";
 import ClientsTables from "../components/CrudAdmin/ClientsCrud.jsx";
+import Egreso from  '../components/Caja/Egreso.jsx';
+import Ingreso from '../components/Caja/Ingreso.jsx';
 import "../styles/Administrador.css";
 
 const NAVIGATION = [
@@ -129,6 +131,14 @@ export default function DashboardLayoutBasic(props) {
     if (router.pathname === "/Clientes" ) {
       return <ClientsTables />; 
     }
+    if (router.pathname === "/Caja/Egreso" ) {
+      return <Egreso/>; 
+    }
+    if (router.pathname === "/Caja/Ingreso" ) {
+      return <Ingreso/>; 
+    }
+   
+   
 
 
     

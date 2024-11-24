@@ -1,30 +1,69 @@
-import * as React from 'react';
-import { extendTheme, styled } from '@mui/material/styles';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import EventIcon from '@mui/icons-material/Event';
-import { AppProvider } from '@toolpad/core/AppProvider';
-import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { PageContainer } from '@toolpad/core/PageContainer';
-import Grid from '@mui/material/Grid2';
-import CitasCrud from '../components/CrudAdmin/CitasCrud';
-import '../styles/Cliente.css';
+import * as React from "react";
+import { extendTheme, styled } from "@mui/material/styles";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import DescriptionIcon from "@mui/icons-material/Description";
+import ContentCutIcon from "@mui/icons-material/ContentCut";
+import EventIcon from "@mui/icons-material/Event";
+import { AppProvider } from "@toolpad/core/AppProvider";
+import { DashboardLayout } from "@toolpad/core/DashboardLayout";
+import { PageContainer } from "@toolpad/core/PageContainer";
+import GroupsIcon from '@mui/icons-material/Groups';
+import Grid from "@mui/material/Grid2";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import ServicesTable from "../components/CrudAdmin/ServiceCrud.jsx";
+import ClientsTables from "../components/CrudAdmin/ClientsCrud.jsx";
+import Egreso from  '../components/Caja/Egreso.jsx';
+import Ingreso from '../components/Caja/Ingreso.jsx';
+import "../styles/Administrador.css";
 
 const NAVIGATION = [
   {
-    segment: 'dashboard',
-    title: 'Dashboard',
+    segment: "dashboard",
+    title: "Dashboard",
     icon: <DashboardIcon />,
   },
   {
-    segment: 'Citas',
-    title: 'Citas',
+    segment: "Clientes",
+    title: "Clientes",
+    icon: <GroupsIcon />,
+  },
+  {
+    segment: "Servicios",
+    title: "Servicios",
+    icon: <ContentCutIcon />,
+  },
+  {
+    segment: "Caja",
+    title: "Caja",
+    icon: <AttachMoneyIcon />,
+    children: [
+      {
+        segment: "Egreso",
+        title: "Egreso",
+        icon: <DescriptionIcon />,
+      },
+      {
+        segment: "Ingreso",
+        title: "Ingreso",
+        icon: <DescriptionIcon />,
+      },
+      {
+        segment: "Caja",
+        title: "Arqueo de Caja",
+        icon: <DescriptionIcon />,
+      }
+    ],
+  },
+  {
+    segment: "Citas",
+    title: "Citas",
     icon: <EventIcon />,
   },
 ];
 
 const demoTheme = extendTheme({
   colorSchemes: { light: true, dark: true },
-  colorSchemeSelector: 'class',
+  colorSchemeSelector: "class",
   breakpoints: {
     values: {
       xs: 0,
@@ -50,7 +89,7 @@ function useDemoRouter(initialPath) {
   return router;
 }
 
-const Skeleton = styled('div')(({ theme, height }) => ({
+const Skeleton = styled("div")(({ theme, height }) => ({
   backgroundColor: theme.palette.action.hover,
   borderRadius: theme.shape.borderRadius,
   height,
@@ -58,7 +97,7 @@ const Skeleton = styled('div')(({ theme, height }) => ({
 }));
 
 const BRANDING = {
-  title: 'BarberXE',
+  title: "BarberXE",
   logo: (
     <img
       src="https://cdn-icons-png.flaticon.com/512/7338/7338646.png"
@@ -76,10 +115,18 @@ export default function DashboardLayoutBasic(props) {
   const demoWindow = window ? window() : undefined;
 
   const renderContent = () => {
-    if (router.pathname === "/Citas" ) {
-      return <CitasCrud />; 
+    if (router.pathname === "/Servicios" ) {
+      return <ServicesTable />; 
     }
-  
+    if (router.pathname === "/Clientes" ) {
+      return <ClientsTables />; 
+    }
+    if (router.pathname === "/Caja/Egreso" ) {
+      return <Egreso/>; 
+    }
+    if (router.pathname === "/Caja/Ingreso" ) {
+      return <Ingreso/>; 
+    }
 
     
     return (
@@ -135,4 +182,3 @@ export default function DashboardLayoutBasic(props) {
     </AppProvider>
   );
 }
-
