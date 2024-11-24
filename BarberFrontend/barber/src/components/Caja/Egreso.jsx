@@ -18,7 +18,8 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { styled } from "@mui/system";
-import EgresoService from "../../services/EgresoService"; 
+import EgresoService from "../../services/EgresoService";
+
 
 const StyledButton = styled(Button)(({ theme }) => ({
   background: theme.palette.mode === "dark"
@@ -49,9 +50,8 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-function EgresosCrud() {
+function Egresos() {
   const theme = useTheme();
-
   const [rows, setRows] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const [newEgreso, setNewEgreso] = React.useState({
@@ -61,8 +61,9 @@ function EgresosCrud() {
   });
   const [errors, setErrors] = React.useState({});
 
+  // Cargar egresos desde el backend
   const fetchEgresos = async () => {
-    const egresos = await EgresoService.getEgresos(); // Aquí si tuvieses un método get, lo usarías
+    const egresos = await EgresoService.getEgresos(); // Asume que tienes un servicio similar a ClientService para Egreso
     setRows(egresos);
     console.log("Egresos cargados:", egresos);
   };
@@ -104,10 +105,10 @@ function EgresosCrud() {
     if (!validate()) return;
 
     // Añadir nuevo egreso
-    const addedEgreso = await EgresoService.createEgreso(newEgreso);
-    console.log("Egreso añadido:", addedEgreso);
-    setRows((prevRows) => [...prevRows, addedEgreso]); // Añadir el nuevo egreso a la tabla
+    await EgresoService.createEgreso(newEgreso);
+    console.log("Egreso añadido:", newEgreso);
     handleClose();
+    fetchEgresos(); // Recargar la lista de egresos
   };
 
   return (
@@ -131,8 +132,8 @@ function EgresosCrud() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, index) => (
-              <TableRow key={index}>
+            {rows.map((row) => (
+              <TableRow key={row.id}>
                 <TableCell>{row.valor}</TableCell>
                 <TableCell>{row.descripcion}</TableCell>
                 <TableCell>{row.fecha}</TableCell>
@@ -186,19 +187,19 @@ function EgresosCrud() {
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
-          <Button
-            onClick={handleClose}
-            variant="outlined"
+          <Button 
+            onClick={handleClose} 
+            variant="outlined" 
             color="secondary"
-            style={{ textTransform: "none" }}
+            style={{ textTransform: "none" }} 
           >
             Cancelar
           </Button>
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
+          <Button 
+            onClick={handleSubmit} 
+            variant="contained" 
             color="primary"
-            style={{ textTransform: "none" }}
+            style={{ textTransform: "none" }} 
           >
             Añadir
           </Button>
@@ -208,5 +209,4 @@ function EgresosCrud() {
   );
 }
 
-export default EgresosCrud;
-
+export default Egresos;

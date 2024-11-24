@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Scissors, Calendar, User } from 'lucide-react';
-import { services, barbers } from '../components/data';
-import ServiceCard from '../components/ServiceCard';
-import BarberCard from '../components/BarberCard';
-import DatePicker from '../components/DatePicker';
-import BookingSummary from '../components/BookingSummary';
+import { services, barbers } from '../Clientes/data';
+import ServiceCard from '../ServiceCard';
+import BarberCard from '../BarberCard';
+import DatePicker from '../DatePicker';
+import BookingSummary from '../BookingSummary';
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate
-import CitaService from '../services/CitasService'; // Asegúrate de importar el servicio
+import CitaService from '../../services/CitasService'; // Asegúrate de importar el servicio
 
 function CitasCliente() {
   const [selectedServices, setSelectedServices] = useState([]);
@@ -70,16 +70,6 @@ function CitasCliente() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex items-center gap-3">
-            <Scissors className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Proceso de Cita</h1>
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex gap-8">

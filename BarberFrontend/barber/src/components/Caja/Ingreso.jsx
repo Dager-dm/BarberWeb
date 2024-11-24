@@ -63,7 +63,7 @@ function IngresosCrud() {
 
   // Cargar ingresos desde el backend
   const fetchIngresos = async () => {
-    const ingresos = await IngresoService.getIngresos(); // Asegúrate de tener un servicio IngresoService similar a EgresoService
+    const ingresos = await IngresoService.getIngresos();
     setRows(ingresos);
     console.log("Ingresos cargados:", ingresos);
   };

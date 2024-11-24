@@ -1,5 +1,5 @@
 import * as React from "react";
-import { extendTheme, styled } from "@mui/material/styles";
+import { Skeleton } from "@mui/material"; // Asegúrate de importar Skeleton
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import DescriptionIcon from "@mui/icons-material/Description";
 import ContentCutIcon from "@mui/icons-material/ContentCut";
@@ -9,15 +9,20 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
 import GroupIcon from '@mui/icons-material/Group';
 import GroupsIcon from '@mui/icons-material/Groups';
-import Grid from "@mui/material/Grid2";
+import Grid from "@mui/material/Grid";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ServicesTable from "../components/CrudAdmin/ServiceCrud.jsx";
 import EmployeesTable from "../components/CrudAdmin/EmployeesCrud.jsx";
 import ClientsTables from "../components/CrudAdmin/ClientsCrud.jsx";
-import Egreso from  '../components/Caja/Egreso.jsx';
+import CitasTables from "../components/CrudAdmin/CitasTable.jsx";
+import CitasRegistro from '../components/Clientes/CitasCliente.jsx';
+import Egreso from '../components/Caja/Egreso.jsx';
 import Ingreso from '../components/Caja/Ingreso.jsx';
+import ArqueodeCaja from "../components/Caja/ArqueodeCaja.jsx";
+import { extendTheme } from '@mui/material/styles';
 import "../styles/Administrador.css";
 
+// Configuración de navegación
 const NAVIGATION = [
   {
     segment: "dashboard",
@@ -27,7 +32,7 @@ const NAVIGATION = [
   {
     segment: "Empleados",
     title: "Empleados",
-    icon: <GroupIcon  />,
+    icon: <GroupIcon />,
   },
   {
     segment: "Clientes",
@@ -55,8 +60,8 @@ const NAVIGATION = [
         icon: <DescriptionIcon />,
       },
       {
-        segment: "Caja",
-        title: "Arqueo de Caja",
+        segment: "Arqueo",
+        title: "Arqueo",
         icon: <DescriptionIcon />,
       }
     ],
@@ -65,44 +70,37 @@ const NAVIGATION = [
     segment: "Citas",
     title: "Citas",
     icon: <EventIcon />,
+    children: [
+      {
+        segment: "Registrar",
+        title: "Registrar",
+        icon: <DescriptionIcon />,
+      },
+      {
+        segment: "Consultar",
+        title: "Consultar",
+        icon: <DescriptionIcon />,
+      },
+    ],
   },
 ];
 
+// Configuración de tema
 const demoTheme = extendTheme({
-  colorSchemes: { light: true, dark: true },
-  colorSchemeSelector: "class",
+  colorSchemes: { light: true },
+  colorSchemeSelector: 'class',
   breakpoints: {
     values: {
       xs: 0,
       sm: 600,
-      md: 600,
+      md: 900,
       lg: 1200,
       xl: 1536,
     },
   },
 });
 
-function useDemoRouter(initialPath) {
-  const [pathname, setPathname] = React.useState(initialPath);
-
-  const router = React.useMemo(() => {
-    return {
-      pathname,
-      searchParams: new URLSearchParams(),
-      navigate: (path) => setPathname(String(path)),
-    };
-  }, [pathname]);
-
-  return router;
-}
-
-const Skeleton = styled("div")(({ theme, height }) => ({
-  backgroundColor: theme.palette.action.hover,
-  borderRadius: theme.shape.borderRadius,
-  height,
-  content: '" "',
-}));
-
+// Branding
 const BRANDING = {
   title: "BarberXE",
   logo: (
@@ -114,71 +112,56 @@ const BRANDING = {
   ),
 };
 
-export default function DashboardLayoutBasic(props) {
+// Función de router personalizada
+function useDemoRouter(initialPath) {
+  const [pathname, setPathname] = React.useState(initialPath);
+
+  const router = React.useMemo(() => ({
+    pathname,
+    searchParams: new URLSearchParams(),
+    navigate: (path) => setPathname(path),
+  }), [pathname]);
+
+  return router;
+}
+
+// Componente principal
+export default function Administrador(props) {
   const { window } = props;
-
   const router = useDemoRouter("/dashboard");
-
   const demoWindow = window ? window() : undefined;
 
+  // Renderizar contenido según la ruta
   const renderContent = () => {
-    if (router.pathname === "/Servicios" ) {
-      return <ServicesTable />; 
+    switch (router.pathname) {
+      case "/Servicios":
+        return <ServicesTable />;
+      case "/Empleados":
+        return <EmployeesTable />;
+      case "/Clientes":
+        return <ClientsTables />;
+      case "/Citas/Registrar":
+        return <CitasRegistro />;
+      case "/Citas/Consultar":
+        return <CitasTables />;
+      case "/Caja/Egreso":
+        return <Egreso />;
+      case "/Caja/Ingreso":
+        return <Ingreso />;
+      case "/Caja/Arqueo":
+        return <ArqueodeCaja />;
+      default:
+        return (
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <Skeleton height={14} />
+            </Grid>
+            <Grid item xs={12}>
+              <Skeleton height={100} />
+            </Grid>
+          </Grid>
+        );
     }
-    if (router.pathname === "/Empleados" ) {
-      return <EmployeesTable />; 
-    }
-    if (router.pathname === "/Clientes" ) {
-      return <ClientsTables />; 
-    }
-    if (router.pathname === "/Caja/Egreso" ) {
-      return <Egreso/>; 
-    }
-    if (router.pathname === "/Caja/Ingreso" ) {
-      return <Ingreso/>; 
-    }
-   
-   
-
-
-    
-    return (
-      <Grid container spacing={1}>
-        <Grid size={5} />
-        <Grid size={12}>
-          <Skeleton height={14} />
-        </Grid>
-        <Grid size={12}>
-          <Skeleton height={14} />
-        </Grid>
-        <Grid size={4}>
-          <Skeleton height={100} />
-        </Grid>
-        <Grid size={8}>
-          <Skeleton height={100} />
-        </Grid>
-
-        <Grid size={12}>
-          <Skeleton height={150} />
-        </Grid>
-        <Grid size={12}>
-          <Skeleton height={14} />
-        </Grid>
-
-        <Grid size={3}>
-          <Skeleton height={100} />
-        </Grid>
-        <Grid size={3}>
-          <Skeleton height={100} />
-        </Grid>
-        <Grid size={3}>
-          <Skeleton height={100} />
-        </Grid>
-        <Grid size={3}>
-          <Skeleton height={100} />
-        </Grid>
-      </Grid>
-    );
   };
 
   return (
@@ -186,8 +169,8 @@ export default function DashboardLayoutBasic(props) {
       branding={BRANDING}
       navigation={NAVIGATION}
       router={router}
-      theme={demoTheme}
       window={demoWindow}
+      theme={demoTheme}
     >
       <DashboardLayout>
         <PageContainer>{renderContent()}</PageContainer>

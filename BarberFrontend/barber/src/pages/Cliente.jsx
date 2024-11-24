@@ -4,10 +4,12 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import EventIcon from '@mui/icons-material/Event';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
+import DescriptionIcon from "@mui/icons-material/Description";
 import { PageContainer } from '@toolpad/core/PageContainer';
 import Grid from '@mui/material/Grid2';
-import CitasCrud from '../components/CrudAdmin/CitasCrud';
+import CitasTable from '../components/Clientes/CitasCrud';
 import '../styles/Cliente.css';
+import CitasRegistro from '../components/Clientes/CitasCliente.jsx'
 
 const NAVIGATION = [
   {
@@ -16,14 +18,26 @@ const NAVIGATION = [
     icon: <DashboardIcon />,
   },
   {
-    segment: 'Citas',
-    title: 'Citas',
+    segment: "Citas",
+    title: "Citas",
     icon: <EventIcon />,
+    children: [
+      {
+        segment: "Registrar",
+        title: "Registrar",
+        icon: <DescriptionIcon />,
+      },
+      {
+        segment: "Consultar",
+        title: "Consultar",
+        icon: <DescriptionIcon />,
+      },
+    ],
   },
 ];
 
 const demoTheme = extendTheme({
-  colorSchemes: { light: true, dark: true },
+  colorSchemes: { light: true, dark: false},
   colorSchemeSelector: 'class',
   breakpoints: {
     values: {
@@ -76,9 +90,13 @@ export default function DashboardLayoutBasic(props) {
   const demoWindow = window ? window() : undefined;
 
   const renderContent = () => {
-    if (router.pathname === "/Citas" ) {
-      return <CitasCrud />; 
+    if (router.pathname === "/Citas/Registrar" ) {
+      return <CitasRegistro />; 
     }
+    if (router.pathname === "/Citas/Consultar" ) {
+      return <CitasTable />; 
+    }
+    
   
 
     

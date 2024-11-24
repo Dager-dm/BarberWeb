@@ -14,7 +14,10 @@ import ServicesTable from "../components/CrudAdmin/ServiceCrud.jsx";
 import ClientsTables from "../components/CrudAdmin/ClientsCrud.jsx";
 import Egreso from  '../components/Caja/Egreso.jsx';
 import Ingreso from '../components/Caja/Ingreso.jsx';
+import ArqueodeCaja from "../components/Caja/ArqueoCajero.jsx";
 import "../styles/Administrador.css";
+import CitasRegistro from "../components/Clientes/CitasCliente.jsx";
+import CitasTable from "../components/CrudAdmin/CitasTable.jsx";
 
 const NAVIGATION = [
   {
@@ -48,8 +51,8 @@ const NAVIGATION = [
         icon: <DescriptionIcon />,
       },
       {
-        segment: "Caja",
-        title: "Arqueo de Caja",
+        segment: "Arqueo",
+        title: "Arqueo",
         icon: <DescriptionIcon />,
       }
     ],
@@ -58,11 +61,23 @@ const NAVIGATION = [
     segment: "Citas",
     title: "Citas",
     icon: <EventIcon />,
+    children: [
+      {
+        segment: "Registrar",
+        title: "Registrar",
+        icon: <DescriptionIcon />,
+      },
+      {
+        segment: "Consultar",
+        title: "Consultar",
+        icon: <DescriptionIcon />,
+      },
+    ],
   },
 ];
 
 const demoTheme = extendTheme({
-  colorSchemes: { light: true, dark: true },
+  colorSchemes: { light: true, dark: false},
   colorSchemeSelector: "class",
   breakpoints: {
     values: {
@@ -121,12 +136,23 @@ export default function DashboardLayoutBasic(props) {
     if (router.pathname === "/Clientes" ) {
       return <ClientsTables />; 
     }
+    if (router.pathname === "/Citas/Registrar" ) {
+      return <CitasRegistro/>; 
+    }
+    if (router.pathname === "/Citas/Consultar" ) {
+      return <CitasTable/>; 
+    }
+    
     if (router.pathname === "/Caja/Egreso" ) {
       return <Egreso/>; 
     }
     if (router.pathname === "/Caja/Ingreso" ) {
       return <Ingreso/>; 
     }
+    if (router.pathname === "/Caja/Arqueo" ) {
+      return <ArqueodeCaja/>; 
+    }
+
 
     
     return (

@@ -23,34 +23,26 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { styled } from "@mui/system";
 import ClientService from "../../services/ClientService"; 
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  background: theme.palette.mode === "dark"
-    ? "linear-gradient(to right, #6a11cb, #2575fc)"
-    : "linear-gradient(to right, #2575fc, #6a11cb)",
+const StyledButton = styled(Button)({
+  background: "linear-gradient(to right, #2575fc, #6a11cb)",
   color: "#fff",
   padding: "10px 20px",
   fontWeight: "bold",
   borderRadius: "25px",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
   "&:hover": {
-    background: theme.palette.mode === "dark"
-      ? "linear-gradient(to right, #5a0dba, #1f60d0)"
-      : "linear-gradient(to right, #1f60d0, #5a0dba)",
+    background: "linear-gradient(to right, #1f60d0, #5a0dba)",
   },
-}));
+});
 
-const StyledDialog = styled(Dialog)(({ theme }) => ({
+const StyledDialog = styled(Dialog)({
   "& .MuiDialog-paper": {
     borderRadius: "20px",
-    padding: theme.spacing(3),
-    background: theme.palette.mode === "dark"
-      ? "linear-gradient(to right, #1e1e1e, #252525)"
-      : "linear-gradient(to right, #ffffff, #f7f9fc)",
-    boxShadow: theme.palette.mode === "dark"
-      ? "0px 4px 20px rgba(255, 255, 255, 0.1)"
-      : "0px 4px 20px rgba(0, 0, 0, 0.1)",
+    padding: "24px",
+    background: "linear-gradient(to right, #ffffff, #f7f9fc)",
+    boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
   },
-}));
+});
 
 function ClientsCrud() {
   const theme = useTheme();
@@ -300,6 +292,4 @@ function ClientsCrud() {
     </div>
   );
 }
-
-export default ClientsCrud;
-
+export default ClientsCrud; 
