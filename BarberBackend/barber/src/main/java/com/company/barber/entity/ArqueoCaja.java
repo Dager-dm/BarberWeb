@@ -1,6 +1,7 @@
 package com.company.barber.entity;
 
 import java.util.Date;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -32,19 +33,19 @@ public class ArqueoCaja {
     private Long SaldoReal;
     private Long Diferencia;
     private String Observacion;
+    private Long TotalIngreso;
+    private Long TotalEgreso;
     @Enumerated(EnumType.STRING)
     private EstadoCrud estado;
     @ManyToOne
     @JoinColumn(name = "id_cajero")
     private Cajero cajero;
-    @OneToMany(mappedBy = "id")
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Egreso> egresos;
-    @OneToMany(mappedBy = "id")
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ingreso> ingresos;
-    @OneToMany(mappedBy = "id")
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Corte> cortes;
 
-
-   
 
 }
