@@ -167,7 +167,6 @@ function ClientsCrud() {
             <TableRow>
               <TableCell>Cédula</TableCell>
               <TableCell>Nombre</TableCell>
-              <TableCell>Email</TableCell>
               <TableCell>Teléfono</TableCell>
               <TableCell>Acciones</TableCell>
             </TableRow>
@@ -177,7 +176,6 @@ function ClientsCrud() {
               <TableRow key={row.cedula}>
                 <TableCell>{row.cedula}</TableCell>
                 <TableCell>{row.name}</TableCell>
-                <TableCell>{row.email}</TableCell>
                 <TableCell>{row.phone}</TableCell>
                 <TableCell>
                   <IconButton color="primary" onClick={() => handleEdit(row.cedula)}>
@@ -222,25 +220,6 @@ function ClientsCrud() {
               error={!!errors.name}
               helperText={errors.name}
               onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
-            />
-            <TextField
-              label="Email"
-              variant="outlined"
-              fullWidth
-              value={newClient.email}
-              error={!!errors.email}
-              helperText={errors.email}
-              onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
-            />
-            <TextField
-              label="Contraseña"
-              variant="outlined"
-              fullWidth
-              type="password"
-              value={newClient.password}
-              error={!!errors.password}
-              helperText={errors.password}
-              onChange={(e) => setNewClient({ ...newClient, password: e.target.value })}
             />
             <TextField
               label="Teléfono"

@@ -14,8 +14,6 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ServicesTable from "../components/CrudAdmin/ServiceCrud.jsx";
 import EmployeesTable from "../components/CrudAdmin/EmployeesCrud.jsx";
 import ClientsTables from "../components/CrudAdmin/ClientsCrud.jsx";
-import CitasTables from "../components/CrudAdmin/CitasTable.jsx";
-import CitasRegistro from '../components/Clientes/CitasCliente.jsx';
 import Egreso from '../components/Caja/Egreso.jsx';
 import Ingreso from '../components/Caja/Ingreso.jsx';
 import ArqueodeCaja from "../components/Caja/ArqueodeCaja.jsx";
@@ -64,23 +62,6 @@ const NAVIGATION = [
         title: "Arqueo",
         icon: <DescriptionIcon />,
       }
-    ],
-  },
-  {
-    segment: "Citas",
-    title: "Citas",
-    icon: <EventIcon />,
-    children: [
-      {
-        segment: "Registrar",
-        title: "Registrar",
-        icon: <DescriptionIcon />,
-      },
-      {
-        segment: "Consultar",
-        title: "Consultar",
-        icon: <DescriptionIcon />,
-      },
     ],
   },
 ];
@@ -140,10 +121,6 @@ export default function Administrador(props) {
         return <EmployeesTable />;
       case "/Clientes":
         return <ClientsTables />;
-      case "/Citas/Registrar":
-        return <CitasRegistro />;
-      case "/Citas/Consultar":
-        return <CitasTables />;
       case "/Caja/Egreso":
         return <Egreso />;
       case "/Caja/Ingreso":

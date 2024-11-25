@@ -16,8 +16,6 @@ import Egreso from  '../components/Caja/Egreso.jsx';
 import Ingreso from '../components/Caja/Ingreso.jsx';
 import ArqueodeCaja from "../components/Caja/ArqueoCajero.jsx";
 import "../styles/Administrador.css";
-import CitasRegistro from "../components/Clientes/CitasCliente.jsx";
-import CitasTable from "../components/CrudAdmin/CitasTable.jsx";
 
 const NAVIGATION = [
   {
@@ -55,23 +53,6 @@ const NAVIGATION = [
         title: "Arqueo",
         icon: <DescriptionIcon />,
       }
-    ],
-  },
-  {
-    segment: "Citas",
-    title: "Citas",
-    icon: <EventIcon />,
-    children: [
-      {
-        segment: "Registrar",
-        title: "Registrar",
-        icon: <DescriptionIcon />,
-      },
-      {
-        segment: "Consultar",
-        title: "Consultar",
-        icon: <DescriptionIcon />,
-      },
     ],
   },
 ];
@@ -136,13 +117,6 @@ export default function DashboardLayoutBasic(props) {
     if (router.pathname === "/Clientes" ) {
       return <ClientsTables />; 
     }
-    if (router.pathname === "/Citas/Registrar" ) {
-      return <CitasRegistro/>; 
-    }
-    if (router.pathname === "/Citas/Consultar" ) {
-      return <CitasTable/>; 
-    }
-    
     if (router.pathname === "/Caja/Egreso" ) {
       return <Egreso/>; 
     }
