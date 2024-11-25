@@ -123,25 +123,33 @@ function Egresos() {
       </StyledButton>
 
       <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Valor</TableCell>
-              <TableCell>Descripción</TableCell>
-              <TableCell>Fecha</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.valor}</TableCell>
-                <TableCell>{row.descripcion}</TableCell>
-                <TableCell>{row.fecha}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+  <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell>Valor</TableCell>
+        <TableCell>Descripción</TableCell>
+        <TableCell>Fecha</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {Array.isArray(rows) && rows.length > 0 ? (
+        rows.map((row) => (
+          <TableRow key={row.id}>
+            <TableCell>{row.valor}</TableCell>
+            <TableCell>{row.descripcion}</TableCell>
+            <TableCell>{row.fecha}</TableCell>
+          </TableRow>
+        ))
+      ) : (
+        <TableRow>
+          <TableCell colSpan={3} style={{ textAlign: "center" }}>
+            No hay registros disponibles.
+          </TableCell>
+        </TableRow>
+      )}
+    </TableBody>
+  </Table>
+</TableContainer>
 
       <StyledDialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
         <DialogTitle

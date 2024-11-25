@@ -10,7 +10,7 @@ function App() {
     <Router>
       <Routes>
         {/* Definir la ruta principal*/}
-        <Route path="/" element={<Cajero/>} />
+        <Route path="/" element={<Administrador/>} />
       </Routes>
     </Router>
   )

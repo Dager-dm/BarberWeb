@@ -10,6 +10,7 @@ const Facturacion = () => {
   const [clients, setClients] = useState([]);
   const [selectedServices, setSelectedServices] = useState([]);
   const [selectedClient, setSelectedClient] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('');
 
   // Método para obtener servicios
   const obtenerServicios = async () => {
@@ -75,15 +76,24 @@ const Facturacion = () => {
     setSelectedClient(e.target.value);
   };
 
+  const handlePaymentMethodChange = (e) => {
+    setPaymentMethod(e.target.value);
+  };
+
   const handleCheckout = async () => {
     if (!selectedClient) {
       alert('Por favor seleccione un cliente');
+      return;
+    }
+    if (!paymentMethod) {
+      alert('Por favor seleccione un método de pago');
       return;
     }
 
     const dataToSend = {
       clientId: selectedClient,
       services: selectedServices,
+      paymentMethod,
       total: selectedServices.reduce((sum, service) => sum + service.price, 0),
       date: new Date(),
     };
@@ -92,6 +102,7 @@ const Facturacion = () => {
 
     setSelectedServices([]);
     setSelectedClient('');
+    setPaymentMethod('');
   };
 
   return (
@@ -110,6 +121,7 @@ const Facturacion = () => {
             onClientChange={handleClientChange}
             onRemoveService={handleRemoveService}
             onCheckout={handleCheckout}
+            onPaymentMethodChange={handlePaymentMethodChange}
           />
         </div>
       </div>

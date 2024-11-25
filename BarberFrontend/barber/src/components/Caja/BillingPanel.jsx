@@ -1,7 +1,7 @@
 import React from 'react';
-import { Trash2, Receipt } from 'lucide-react';
+import { Trash2, Receipt, CreditCard } from 'lucide-react';
 
-function BillingPanel({ clients, selectedServices, onClientChange, onRemoveService, onCheckout }) {
+function BillingPanel({ clients, selectedServices, onClientChange, onRemoveService, onCheckout,onPaymentMethodChange }) {
   const total = selectedServices.reduce((sum, service) => sum + service.price, 0);
 
   return (
@@ -50,7 +50,24 @@ function BillingPanel({ clients, selectedServices, onClientChange, onRemoveServi
           <span className="text-base font-bold">Total:</span>
           <span className="text-base font-bold text-green-600">${total.toFixed(2)}</span>
         </div>
-
+        <div className="mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <CreditCard className="w-5 h-5 text-gray-600" />
+            <label htmlFor="paymentMethod" className="font-medium text-gray-700">
+              Método de Pago
+            </label>
+          </div>
+          <select
+            id="paymentMethod"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            onChange={onPaymentMethodChange}
+          >
+            <option value="">Seleccionar método de pago</option>
+            <option value="efectivo">Efectivo</option>
+            <option value="tarjeta">Tarjeta de Crédito/Débito</option>
+            <option value="transferencia">Transferencia Bancaria</option>
+          </select>
+        </div>
         <button
           onClick={onCheckout}
           disabled={selectedServices.length === 0}

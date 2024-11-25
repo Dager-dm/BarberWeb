@@ -15,18 +15,10 @@ class LoginService {
       };
     }
   
-    // Registrar un nuevo cliente
-    static async registerClient(clienteData) {
-      console.log("Registrar cliente:", clienteData);
-      // Aquí puedes agregar la lógica para enviar la solicitud de registro
-      // return await axios.post(`${this.baseUrl}/register`, clienteData);
-  
-      // Simulación de respuesta vacía
-      return { 
-        success: true, 
-        message: "Registro exitoso" 
-      };
-    }
+     // Obtener el usuario actual
+  static getCurrentUser() {
+    // Método vacío
+  }
   
     // Cerrar sesión
     static logout() {

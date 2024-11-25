@@ -65,22 +65,29 @@ function Cortes() {
 
   return (
     <div style={{ padding: "16px" }}>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Cliente</TableCell>
-              <TableCell>Valor Total</TableCell>
-              <TableCell>Fecha</TableCell>
-              <TableCell>Detalles</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.id}> {/* Usa un id único para cada fila */}
-                <TableCell>{row.cliente}</TableCell>
-                <TableCell>${row.valorTotal.toFixed(2)}</TableCell>
-                <TableCell>{new Date(row.fecha).toLocaleDateString()}</TableCell>
+     <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Cliente</TableCell>
+            <TableCell>Valor Total</TableCell>
+            <TableCell>Fecha</TableCell>
+            <TableCell>Detalles</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {Array.isArray(rows) && rows.length > 0 ? (
+            rows.map((row) => (
+              <TableRow key={row.id || row._id}> {/* Usa un id único para cada fila */}
+                <TableCell>{row.cliente || "Desconocido"}</TableCell> {/* Validación de cliente */}
+                <TableCell>
+                  ${row.valorTotal ? row.valorTotal.toFixed(2) : "0.00"} {/* Validación de valorTotal */}
+                </TableCell>
+                <TableCell>
+                  {row.fecha
+                    ? new Date(row.fecha).toLocaleDateString()
+                    : "Fecha no disponible"} {/* Validación de fecha */}
+                </TableCell>
                 <TableCell>
                   <IconButton
                     color="primary"
@@ -90,10 +97,17 @@ function Cortes() {
                   </IconButton>
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={4} style={{ textAlign: "center" }}>
+                No hay registros disponibles.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
 
       {/* Diálogo para mostrar detalles del corte */}
       <StyledDialog

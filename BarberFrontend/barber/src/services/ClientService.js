@@ -30,6 +30,8 @@ class ClientService {
       console.log("Eliminar cliente (vacío):", cedula);
       return { cedula }; // Retorna el cedula del cliente eliminado como ejemplo
     }
+
+    
   }
   
   export default ClientService;

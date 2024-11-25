@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DollarSign, Clock } from 'lucide-react';
 import ArqueoService from '../../services/ArqueoService';
 import EmployeeService from '../../services/EmployeeService'; // Para obtener la lista de empleados
-import AuthService from '../../services/AuthService'; // Si usas un servicio de autenticación para el usuario logueado
-
+import AuthService from '../../services/LoginService'; // Si usas un servicio de autenticación para el usuario logueado
 function ArqueoDeCaja() {
   const [registers, setRegisters] = useState([]);
   const [currentCashier, setCurrentCashier] = useState(''); // Cajero actual
