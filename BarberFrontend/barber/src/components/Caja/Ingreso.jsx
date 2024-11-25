@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { styled } from "@mui/system";
-import IngresoService from "../../services/IngresoService";
+import ArqueoService from "../../services/ArqueoService";
 
 const StyledButton = styled(Button)(({ theme }) => ({
   background: theme.palette.mode === "dark"
@@ -63,7 +63,7 @@ function IngresosCrud() {
 
   // Cargar ingresos desde el backend
   const fetchIngresos = async () => {
-    const ingresos = await IngresoService.getIngresos();
+    const ingresos = await ArqueoService.getIngresos();
     setRows(ingresos);
     console.log("Ingresos cargados:", ingresos);
   };
@@ -105,7 +105,7 @@ function IngresosCrud() {
     if (!validate()) return;
 
     // Añadir nuevo ingreso
-    await IngresoService.createIngreso(newIngreso);
+    await ArqueoService.AddIngreso(newIngreso);
     console.log("Ingreso añadido:", newIngreso);
     handleClose();
     fetchIngresos(); // Recargar la lista de ingresos

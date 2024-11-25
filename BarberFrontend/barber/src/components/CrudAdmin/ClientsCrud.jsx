@@ -152,15 +152,14 @@ function ClientsCrud() {
 
   return (
     <div style={{ padding: "16px" }}>
-      <StyledButton
-        variant="contained"
-        startIcon={<AddIcon />}
-        onClick={handleAddClient}
-        style={{ marginBottom: "16px", textTransform: "none" }}
-      >
-        Añadir cliente
-      </StyledButton>
-
+        <StyledButton
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={handleAddClient}
+          style={{ textTransform: "none" }}
+        >
+          Añadir cliente
+        </StyledButton>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

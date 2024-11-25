@@ -18,6 +18,33 @@ class ArqueoService {
       console.log("Cerrar arqueo (vacío):", arqueo);
       return arqueo; // Devuelve el objeto de arqueo como ejemplo
     }
+
+  // Registrar un corte (venta de servicio) en el backend
+  static async registrarCorte(data) {
+    console.log("Registrando corte (vacío):", data);
+    return data; // Devuelve los datos enviados como ejemplo
+  }
+
+  static async AddIngreso (data) {
+    console.log("Agregar Ingreso (vacío):", data);
+    return data; 
+  }
+
+  static async AddEgreso (data) {
+    console.log("Agregar Egreso (vacío):", data);
+    return data; 
+  }
+
+  static async GetIngreso(data) {
+    console.log("Obtener Ingreso (vacío):", data);
+    return data; // Devuelve los datos enviados como ejemplo
+  }
+
+  static async GetEgreso(data) {
+    console.log("Obtener Egreso (vacío):", data);
+    return data; // Devuelve los datos enviados como ejemplo
+  }
+
   }
   
   export default ArqueoService;

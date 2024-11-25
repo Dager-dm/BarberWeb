@@ -3,7 +3,6 @@ import { extendTheme, styled } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import DescriptionIcon from "@mui/icons-material/Description";
 import ContentCutIcon from "@mui/icons-material/ContentCut";
-import EventIcon from "@mui/icons-material/Event";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
@@ -12,10 +11,13 @@ import Grid from "@mui/material/Grid2";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ServicesTable from "../components/CrudAdmin/ServiceCrud.jsx";
 import ClientsTables from "../components/CrudAdmin/ClientsCrud.jsx";
+import Facturacion from "../components/Caja/Facturacion.jsx";
+import Cortes from "../components/Caja/Cortes.jsx";
 import Egreso from  '../components/Caja/Egreso.jsx';
 import Ingreso from '../components/Caja/Ingreso.jsx';
 import ArqueodeCaja from "../components/Caja/ArqueoCajero.jsx";
 import "../styles/Administrador.css";
+
 
 const NAVIGATION = [
   {
@@ -38,6 +40,16 @@ const NAVIGATION = [
     title: "Caja",
     icon: <AttachMoneyIcon />,
     children: [
+      {
+        segment: "Facturar",
+        title: "Facturar",
+        icon: <DescriptionIcon />,
+      },
+      {
+        segment: "Cortes",
+        title: "Cortes",
+        icon: <DescriptionIcon />,
+      },
       {
         segment: "Egreso",
         title: "Egreso",
@@ -126,6 +138,13 @@ export default function DashboardLayoutBasic(props) {
     if (router.pathname === "/Caja/Arqueo" ) {
       return <ArqueodeCaja/>; 
     }
+    if (router.pathname === "/Caja/Facturar" ) {
+      return <Facturacion/>; 
+    }
+    if (router.pathname === "/Caja/Cortes" ) {
+      return <Cortes/>; 
+    }
+    
 
 
     

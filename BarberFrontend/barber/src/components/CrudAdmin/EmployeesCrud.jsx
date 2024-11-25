@@ -151,15 +151,14 @@ function EmployeesCrud() {
 
   return (
     <div style={{ padding: "16px" }}>
-      <StyledButton
-        variant="contained"
-        startIcon={<AddIcon />}
-        onClick={handleAddEmployee}
-        style={{ marginBottom: "16px" }}
-      >
-        Añadir Empleado
-      </StyledButton>
-
+        <StyledButton
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={handleAddEmployee}
+          style={{ textTransform: "none" }}
+        >
+          Añadir Empleado
+        </StyledButton>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

@@ -1,31 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { DollarSign, Clock } from 'lucide-react';
 import ArqueoService from '../../services/ArqueoService';
-
-const MOCK_CASHIERS = [
-  { id: 1, name: 'Juan Pérez' },
-  { id: 2, name: 'María García' },
-  { id: 3, name: 'Carlos López' },
-];
+import EmployeeService from '../../services/EmployeeService';
 
 function ArqueoDeCaja() {
   const [registers, setRegisters] = useState([]);
-  const [selectedCashier, setSelectedCashier] = useState('');
+  const [cashiers, setCashiers] = useState([]); // Lista de cajeros
+  const [selectedCashier, setSelectedCashier] = useState(''); // Cajero seleccionado
   const [initialBalance, setInitialBalance] = useState('');
   const [finalBalance, setFinalBalance] = useState('');
   const [observation, setObservation] = useState('');
   const [currentRegister, setCurrentRegister] = useState(null);
 
-  // Mock data for demonstration
-  const totalIncome = 500000;
-  const totalExpenses = 150000;
+  const [totalIncome, setTotalIncome] = useState(0);
+  const [totalExpenses, setTotalExpenses] = useState(0);
 
   useEffect(() => {
+    // Obtener todos los cajeros si es modo administrador
     const fetchCashiers = async () => {
-      const cashiers = await ArqueoService.getCashiers(); // Método vacío por ahora
-      console.log(cashiers); // Aquí se imprimirían los cajeros reales en un futuro
+      try {
+        const employees = await EmployeeService.getEmployees(); // Método para obtener todos los empleados
+        const cashiersList = employees.filter(emp => emp.role === 'Cajero'); // Filtrar solo cajeros
+        setCashiers(cashiersList); 
+      } catch (error) {
+        console.error('Error al obtener cajeros:', error);
+      }
     };
+
+    // Obtener ingresos y egresos
+    const fetchFinancialData = async () => {
+      try {
+        const income = await ArqueoService.GetIngreso(); 
+        const expenses = await ArqueoService.GetEgreso(); 
+        setTotalExpenses(expenses);
+      } catch (error) {
+        console.error('Error al obtener ingresos y egresos:', error);
+      }
+    };
+
     fetchCashiers();
+    fetchFinancialData();
   }, []);
 
   const handleOpenRegister = async (e) => {
@@ -66,7 +80,6 @@ function ArqueoDeCaja() {
 
     setRegisters(registers.map((reg) => (reg.id === currentRegister.id ? updatedRegister : reg)));
     setCurrentRegister(null);
-    setSelectedCashier('');
     setInitialBalance('');
     setFinalBalance('');
     setObservation('');
@@ -79,8 +92,25 @@ function ArqueoDeCaja() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Sistema de Arqueo de Caja</h1>
 
+        {/* Mostrar todos los cajeros si es modo administrador */}
+        <div className="mb-4 text-gray-700">
+          <strong>Seleccionar Cajero:</strong>
+          <select
+            value={selectedCashier}
+            onChange={(e) => setSelectedCashier(e.target.value)}
+            className="ml-2 p-2 border rounded-md"
+          >
+            <option value="">Seleccionar cajero</option>
+            {cashiers.map((cashier) => (
+              <option key={cashier.id} value={cashier.name}>
+                {cashier.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="flex gap-8">
-          {/* Registers History */}
+          {/* Historial de Arqueos */}
           <div className="w-[70%] bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <Clock className="w-5 h-5" />
@@ -139,7 +169,7 @@ function ArqueoDeCaja() {
             </div>
           </div>
 
-          {/* Register Form */}
+          {/* Formulario de Arqueo */}
           <div className="w-[30%] bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <DollarSign className="w-5 h-5" />
@@ -148,22 +178,6 @@ function ArqueoDeCaja() {
 
             {!currentRegister ? (
               <form onSubmit={handleOpenRegister} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Cajero</label>
-                  <select
-                    value={selectedCashier}
-                    onChange={(e) => setSelectedCashier(e.target.value)}
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    required
-                  >
-                    <option value="">Seleccionar cajero</option>
-                    {MOCK_CASHIERS.map((cashier) => (
-                      <option key={cashier.id} value={cashier.name}>
-                        {cashier.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Saldo Base</label>
                   <input
@@ -193,17 +207,8 @@ function ArqueoDeCaja() {
                     <p className="text-sm text-gray-600">Total Egresos</p>
                     <p className="font-medium text-red-600">${totalExpenses.toLocaleString()}</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Saldo Inicial</p>
-                    <p className="font-medium">${currentRegister.initialBalance.toLocaleString()}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Saldo Previsto</p>
-                    <p className="font-medium">
-                      ${(currentRegister.initialBalance + totalIncome - totalExpenses).toLocaleString()}
-                    </p>
-                  </div>
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Saldo Final</label>
                   <input
@@ -215,18 +220,20 @@ function ArqueoDeCaja() {
                     required
                   />
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
                   <textarea
                     value={observation}
                     onChange={(e) => setObservation(e.target.value)}
+                    rows="3"
                     className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                    rows="4"
+                    placeholder="Observaciones"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                  className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Cerrar Arqueo
                 </button>
@@ -238,5 +245,4 @@ function ArqueoDeCaja() {
     </div>
   );
 }
-
 export default ArqueoDeCaja;

@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { styled } from "@mui/system";
-import EgresoService from "../../services/EgresoService";
+import ArqueoService from "../../services/ArqueoService";
 
 
 const StyledButton = styled(Button)(({ theme }) => ({
@@ -63,7 +63,7 @@ function Egresos() {
 
   // Cargar egresos desde el backend
   const fetchEgresos = async () => {
-    const egresos = await EgresoService.getEgresos(); // Asume que tienes un servicio similar a ClientService para Egreso
+    const egresos = await ArqueoService.GetEgreso();
     setRows(egresos);
     console.log("Egresos cargados:", egresos);
   };
@@ -105,7 +105,7 @@ function Egresos() {
     if (!validate()) return;
 
     // Añadir nuevo egreso
-    await EgresoService.createEgreso(newEgreso);
+    await ArqueoService.AddEgreso(newEgreso);
     console.log("Egreso añadido:", newEgreso);
     handleClose();
     fetchEgresos(); // Recargar la lista de egresos

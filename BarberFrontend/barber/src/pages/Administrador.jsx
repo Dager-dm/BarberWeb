@@ -3,7 +3,6 @@ import { Skeleton } from "@mui/material"; // Asegúrate de importar Skeleton
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import DescriptionIcon from "@mui/icons-material/Description";
 import ContentCutIcon from "@mui/icons-material/ContentCut";
-import EventIcon from "@mui/icons-material/Event";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
@@ -14,9 +13,11 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import ServicesTable from "../components/CrudAdmin/ServiceCrud.jsx";
 import EmployeesTable from "../components/CrudAdmin/EmployeesCrud.jsx";
 import ClientsTables from "../components/CrudAdmin/ClientsCrud.jsx";
+import Cortes from "../components/Caja/Cortes.jsx";
 import Egreso from '../components/Caja/Egreso.jsx';
 import Ingreso from '../components/Caja/Ingreso.jsx';
 import ArqueodeCaja from "../components/Caja/ArqueodeCaja.jsx";
+import Facturacion from '../components/Caja/Facturacion.jsx';
 import { extendTheme } from '@mui/material/styles';
 import "../styles/Administrador.css";
 
@@ -47,6 +48,16 @@ const NAVIGATION = [
     title: "Caja",
     icon: <AttachMoneyIcon />,
     children: [
+      {
+        segment: "Facturar",
+        title: "Facturar",
+        icon: <DescriptionIcon />,
+      },
+      {
+        segment: "Cortes",
+        title: "Cortes",
+        icon: <DescriptionIcon />,
+      },
       {
         segment: "Egreso",
         title: "Egreso",
@@ -127,6 +138,10 @@ export default function Administrador(props) {
         return <Ingreso />;
       case "/Caja/Arqueo":
         return <ArqueodeCaja />;
+        case "/Caja/Facturar":
+          return <Facturacion />;
+          case "/Caja/Cortes":
+            return <Cortes />;
       default:
         return (
           <Grid container spacing={1}>
