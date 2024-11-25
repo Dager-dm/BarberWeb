@@ -2,6 +2,7 @@ package com.company.barber.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.company.barber.entity.LoginDto;
 import com.company.barber.entity.Usuario;
 import com.company.barber.service.UsuarioService;
 
