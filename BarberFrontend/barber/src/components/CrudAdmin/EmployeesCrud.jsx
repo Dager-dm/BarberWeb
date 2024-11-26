@@ -269,9 +269,22 @@ function EmployeesCrud() {
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", paddingBottom: 2 }}>
-          <StyledButton onClick={handleSubmit}>
-            {editing ? "Actualizar" : "Guardar"}
-          </StyledButton>
+          <Button 
+            onClick={handleClose} 
+            variant="outlined" 
+            color="secondary"
+            style={{ textTransform: "none" }} 
+          >
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleSubmit} 
+            variant="contained" 
+            color="primary"
+            style={{ textTransform: "none" }} 
+          >
+            {editing ? "Guardar Cambios" : "Añadir"}
+          </Button>
         </DialogActions>
       </StyledDialog>
 
