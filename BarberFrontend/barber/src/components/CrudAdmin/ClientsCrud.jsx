@@ -30,7 +30,6 @@ const StyledButton = styled(Button)({
   fontWeight: "bold",
   borderRadius: "25px",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-  transform: "none",
   fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
  "&:hover": {
     background: "linear-gradient(to right, #c82333, #a71d2a)",
@@ -44,7 +43,6 @@ const StyledButtonCancel = styled(Button)({
   fontWeight: "bold",
   borderRadius: "25px",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-  TextTransform: "none",
   fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   "&:hover": {
     background: "linear-gradient(to right, #c82333, #a71d2a)",
@@ -187,7 +185,7 @@ function ClientsCrud() {
         onClick={handleAddClient}
         style={{ textTransform: "none" }}
       >
-        Añadir cliente
+        Añadir Cliente
       </StyledButton>
       <TableContainer component={Paper}>
         <Table>
