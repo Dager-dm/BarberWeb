@@ -6,6 +6,9 @@ package com.company.barber.entity;
 //import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 //import jakarta.persistence.Temporal;
 //import jakarta.persistence.TemporalType;
 import jakarta.persistence.Entity;
@@ -18,8 +21,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Egreso extends Movimiento {
-
     @ManyToOne
-    @JoinColumn(name = "id_ArqueoCaja")
+    @JoinColumn(name = "id_arqueo")
+    @JsonIgnore
     private ArqueoCaja arqueocaja;
 }

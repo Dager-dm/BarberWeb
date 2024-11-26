@@ -35,8 +35,4 @@ public class EmpleadoController {
         return empleadoservice.Update(id, empleado);
     }
 
-    @DeleteMapping("/{id}")
-    public String deleteCarro(@PathVariable("id") Long id) {
-        return empleadoservice.Delete(id);
-    }
 }

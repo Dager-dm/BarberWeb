@@ -40,12 +40,41 @@ public class ArqueoCaja {
     @ManyToOne
     @JoinColumn(name = "id_cajero")
     private Cajero cajero;
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     private List<Egreso> egresos;
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     private List<Ingreso> ingresos;
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     private List<Corte> cortes;
 
+     
+    public void CalcularSaldoPrevisto(){
+       SaldoPrevisto=SaldoBase+(TotalIngreso - TotalEgreso);
+    }
+
+    public void CalcularIngresos(){
+
+        for (Corte corte : cortes) {
+            if (corte.getFormapago().equals(FormaPago.Efectivo)) {
+                TotalIngreso=TotalIngreso+corte.getValor();
+            }
+        }
+
+        for (Ingreso i : ingresos) {
+            TotalIngreso=TotalIngreso+i.getValor();
+        }
+
+    }
+
+    public void CalcularEgresos(){
+        for(Egreso e: egresos){
+            TotalEgreso=TotalEgreso+e.getValor();
+        }
+    }
+
+    public void CalcularDiferencia(){
+        Diferencia=SaldoPrevisto-SaldoReal;
+    }
+    
 
 }

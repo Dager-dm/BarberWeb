@@ -2,6 +2,8 @@ package com.company.barber.entity;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -20,5 +22,6 @@ public class Cliente extends Persona {
     @OneToMany(mappedBy = "id")
     private List<Cita> citas;
     @OneToMany(mappedBy = "id")
+    @JsonIgnore
     private List<Corte> cortes;
 }

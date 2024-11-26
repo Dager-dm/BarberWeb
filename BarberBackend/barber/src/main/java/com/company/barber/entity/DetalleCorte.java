@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.Id;
 import java.util.List;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,7 +20,7 @@ public class DetalleCorte {
     private Long id;
     private Long subtotal;
     @ManyToOne
-    @JoinColumn(name = "id_Corte")
+    @JoinColumn(name = "id_corte")
     private Corte corte;
     @OneToMany(mappedBy = "id")
     private List<Servicio> servicios;
