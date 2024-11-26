@@ -25,34 +25,53 @@ import ClientService from "../../services/ClientService";
 
 
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  background: theme.palette.mode === "dark"
-    ? "linear-gradient(to right, #6a11cb, #2575fc)"
-    : "linear-gradient(to right, #2575fc, #6a11cb)",
+const StyledButton = styled(Button)({
+  background: "linear-gradient(to right, #ff416c, #ff4b2b)",
   color: "#fff",
   padding: "10px 20px",
   fontWeight: "bold",
   borderRadius: "25px",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-  "&:hover": {
-    background: theme.palette.mode === "dark"
-      ? "linear-gradient(to right, #5a0dba, #1f60d0)"
-      : "linear-gradient(to right, #1f60d0, #5a0dba)",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+ "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)",
   },
-}));
+});
 
-const StyledDialog = styled(Dialog)(({ theme }) => ({
+const StyledButtonCancel = styled(Button)({
+  background: "Red",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+  "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)",
+  },
+});
+
+const StyledButtonSave = styled(Button)({
+  background: "linear-gradient(to right, #7ed957, #5dc82e)",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+ "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)"
+  },
+});
+
+const StyledDialog = styled(Dialog)({
   "& .MuiDialog-paper": {
     borderRadius: "20px",
-    padding: theme.spacing(3),
-    background: theme.palette.mode === "dark"
-      ? "linear-gradient(to right, #1e1e1e, #252525)"
-      : "linear-gradient(to right, #ffffff, #f7f9fc)",
-    boxShadow: theme.palette.mode === "dark"
-      ? "0px 4px 20px rgba(255, 255, 255, 0.1)"
-      : "0px 4px 20px rgba(0, 0, 0, 0.1)",
+    padding: "24px",
+    background: "linear-gradient(to right, #ffffff, #f7f9fc)",
+    boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
   },
-}));
+});
 
 function ClientsCrud() {
   const theme = useTheme();
@@ -165,18 +184,16 @@ function ClientsCrud() {
         variant="contained"
         startIcon={<AddIcon />}
         onClick={handleAddClient}
-        style={{ marginBottom: "16px", textTransform: "none" }}
+        style={{ textTransform: "none" }}
       >
-        Añadir cliente
+        Añadir Cliente
       </StyledButton>
-
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>Cédula</TableCell>
               <TableCell>Nombre</TableCell>
-              <TableCell>Email</TableCell>
               <TableCell>Teléfono</TableCell>
               <TableCell>Acciones</TableCell>
             </TableRow>
@@ -234,25 +251,6 @@ function ClientsCrud() {
               onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
             />
             <TextField
-              label="Email"
-              variant="outlined"
-              fullWidth
-              value={newClient.email}
-              error={!!errors.email}
-              helperText={errors.email}
-              onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
-            />
-            <TextField
-              label="Contraseña"
-              variant="outlined"
-              fullWidth
-              type="password"
-              value={newClient.password}
-              error={!!errors.password}
-              helperText={errors.password}
-              onChange={(e) => setNewClient({ ...newClient, password: e.target.value })}
-            />
-            <TextField
               label="Teléfono"
               variant="outlined"
               fullWidth
@@ -264,22 +262,12 @@ function ClientsCrud() {
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
-          <Button
-            onClick={handleClose}
-            variant="outlined"
-            color="secondary"
-            style={{ textTransform: "none" }}
-          >
+          <StyledButtonCancel onClick={handleClose} style={{ marginRight: "10px", TextTransform: "none"}}>
             Cancelar
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
-            color="primary"
-            style={{ textTransform: "none" }}
-          >
-            {editing ? "Guardar Cambios" : "Añadir"}
-          </Button>
+          </StyledButtonCancel>
+          <StyledButtonSave onClick={handleSubmit} style={{ marginRight: "10px", TextTransform: "none"}}>
+            {editing ? "Actualizar" : "Guardar"}
+          </StyledButtonSave>
         </DialogActions>
       </StyledDialog>
 
@@ -302,6 +290,4 @@ function ClientsCrud() {
     </div>
   );
 }
-
-export default ClientsCrud;
-
+export default ClientsCrud; 

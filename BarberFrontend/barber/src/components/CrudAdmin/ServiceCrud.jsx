@@ -15,7 +15,6 @@ import {
   DialogTitle,
   TextField,
   Box,
-  useTheme,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -24,39 +23,55 @@ import { styled } from "@mui/system";
 import ServiceService from "../../services/ServiceService";
 import { Duration } from 'luxon';
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  background: theme.palette.mode === "dark"
-    ? "linear-gradient(to right, #6a11cb, #2575fc)"
-    : "linear-gradient(to right, #2575fc, #6a11cb)",
+const StyledButton = styled(Button)({
+  background: "linear-gradient(to right, #ff416c, #ff4b2b)",
   color: "#fff",
   padding: "10px 20px",
   fontWeight: "bold",
   borderRadius: "25px",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-  "&:hover": {
-    background: theme.palette.mode === "dark"
-      ? "linear-gradient(to right, #5a0dba, #1f60d0)"
-      : "linear-gradient(to right, #1f60d0, #5a0dba)",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+ "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)",
   },
-  textTransform: "none", // Desactivar mayúsculas predeterminadas
-}));
+});
 
-const StyledDialog = styled(Dialog)(({ theme }) => ({
+const StyledButtonCancel = styled(Button)({
+  background: "Red",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+  "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)",
+  },
+});
+
+const StyledButtonSave = styled(Button)({
+  background: "linear-gradient(to right, #7ed957, #5dc82e)",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+ "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)"
+  },
+});
+
+const StyledDialog = styled(Dialog)({
   "& .MuiDialog-paper": {
     borderRadius: "20px",
-    padding: theme.spacing(3),
-    background: theme.palette.mode === "dark"
-      ? "linear-gradient(to right, #1e1e1e, #252525)"
-      : "linear-gradient(to right, #ffffff, #f7f9fc)",
-    boxShadow: theme.palette.mode === "dark"
-      ? "0px 4px 20px rgba(255, 255, 255, 0.1)"
-      : "0px 4px 20px rgba(0, 0, 0, 0.1)",
+    padding: "24px",
+    background: "linear-gradient(to right, #ffffff, #f7f9fc)",
+    boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
   },
-}));
+});
 
 function ServicesCrud() {
-  const theme = useTheme();
-
   const [rows, setRows] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const [openConfirm, setOpenConfirm] = React.useState(false);
@@ -152,7 +167,7 @@ function ServicesCrud() {
         variant="contained"
         startIcon={<AddIcon />}
         onClick={handleAddService}
-        style={{ marginBottom: "16px" }}
+        style={{ marginBottom: "16px", textTransform: "none"}}
       >
         Añadir Servicio
       </StyledButton>
@@ -190,13 +205,7 @@ function ServicesCrud() {
       </TableContainer>
 
       <StyledDialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <DialogTitle
-          sx={{
-            textAlign: "center",
-            fontWeight: "bold",
-            color: theme.palette.mode === "dark" ? "#fff" : "#000",
-          }}
-        >
+        <DialogTitle sx={{ textAlign: "center", fontWeight: "bold" }}>
           {editing ? "Editar Servicio" : "Añadir Nuevo Servicio"}
         </DialogTitle>
         <DialogContent>
@@ -231,29 +240,17 @@ function ServicesCrud() {
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
-          <Button
-            onClick={handleClose}
-            variant="outlined"
-            color="secondary"
-            style={{ textTransform: "none" }}
-          >
+        <StyledButtonCancel onClick={handleClose} style={{ marginRight: "10px" }}>
             Cancelar
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
-            color="primary"
-            style={{ textTransform: "none" }}
-          >
-            {editing ? "Guardar Cambios" : "Añadir"}
-          </Button>
+          </StyledButtonCancel>
+          <StyledButtonSave onClick={handleSubmit}>
+            {editing ? "Actualizar" : "Guardar"}
+          </StyledButtonSave>
         </DialogActions>
       </StyledDialog>
 
       <Dialog open={openConfirm} onClose={cancelDelete}>
-        <DialogTitle sx={{ color: theme.palette.mode === "dark" ? "#fff" : "#000" }}>
-          Confirmar Eliminación
-        </DialogTitle>
+        <DialogTitle>Confirmar Eliminación</DialogTitle>
         <DialogContent>
           ¿Estás seguro de que deseas eliminar este servicio?
         </DialogContent>
@@ -270,4 +267,4 @@ function ServicesCrud() {
   );
 }
 
-export default ServicesCrud
+export default ServicesCrud;

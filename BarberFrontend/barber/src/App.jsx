@@ -1,13 +1,19 @@
 import React from 'react';
 import Administrador from './pages/Administrador';
-import Cliente from './pages/Cliente';
 import Login from './pages/Login';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Cajero from './pages/Cajero';
 
 function App() {
 
   return (
-   <Administrador/>
+    <Router>
+      <Routes>
+        {/* Definir la ruta principal*/}
+        <Route path="/" element={<Administrador/>} />
+      </Routes>
+    </Router>
   )
 }
 
-export default App
+export default App;

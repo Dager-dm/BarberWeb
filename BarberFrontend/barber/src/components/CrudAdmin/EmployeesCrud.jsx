@@ -16,7 +16,6 @@ import {
   DialogTitle,
   TextField,
   Box,
-  useTheme,
   MenuItem,
   Select,
   FormControl,
@@ -27,39 +26,58 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { styled } from "@mui/system";
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  background: theme.palette.mode === "dark"
-    ? "linear-gradient(to right, #6a11cb, #2575fc)"
-    : "linear-gradient(to right, #2575fc, #6a11cb)",
+const StyledButton = styled(Button)({
+  background: "linear-gradient(to right, #ff416c, #ff4b2b)",
   color: "#fff",
   padding: "10px 20px",
   fontWeight: "bold",
   borderRadius: "25px",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-  textTransform: 'none', // Desactivar mayúsculas
-  "&:hover": {
-    background: theme.palette.mode === "dark"
-      ? "linear-gradient(to right, #5a0dba, #1f60d0)"
-      : "linear-gradient(to right, #1f60d0, #5a0dba)",
+  transform: "none",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+ "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)",
   },
-}));
+});
 
-const StyledDialog = styled(Dialog)(({ theme }) => ({
+const StyledButtonCancel = styled(Button)({
+  background: "Red",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  transform: "none",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+  "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)",
+  },
+});
+
+const StyledButtonSave = styled(Button)({
+  background: "linear-gradient(to right, #7ed957, #5dc82e)",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  transform: "none",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+ "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)"
+  },
+});
+
+const StyledDialog = styled(Dialog)({
   "& .MuiDialog-paper": {
     borderRadius: "20px",
-    padding: theme.spacing(3),
-    background: theme.palette.mode === "dark"
-      ? "linear-gradient(to right, #1e1e1e, #252525)"
-      : "linear-gradient(to right, #ffffff, #f7f9fc)",
-    boxShadow: theme.palette.mode === "dark"
-      ? "0px 4px 20px rgba(255, 255, 255, 0.1)"
-      : "0px 4px 20px rgba(0, 0, 0, 0.1)",
+    padding: 16,
+    background: "linear-gradient(to right, #ffffff, #f7f9fc)",
+    boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
   },
-}));
+});
 
 function EmployeesCrud() {
-  const theme = useTheme();
-
   // Estado del componente
   const [rows, setRows] = useState([]); // Lista de empleados
   const [open, setOpen] = useState(false); // Modal de añadir/editar
@@ -71,7 +89,7 @@ function EmployeesCrud() {
     phone: "",
     cargo: "",
     email: "",
-    password: "", // Campos de email y password
+    password: "",
   }); // Nuevo empleado
   const [editing, setEditing] = useState(false); // Si estamos editando o creando un nuevo empleado
   const [errors, setErrors] = useState({}); // Errores de validación
@@ -167,15 +185,14 @@ function EmployeesCrud() {
 
   return (
     <div style={{ padding: "16px" }}>
-      <StyledButton
-        variant="contained"
-        startIcon={<AddIcon />}
-        onClick={handleAddEmployee}
-        style={{ marginBottom: "16px" }}
-      >
-        Añadir Empleado
-      </StyledButton>
-
+        <StyledButton
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={handleAddEmployee}
+          style={{ textTransform: "none" }}
+        >
+          Añadir Empleado
+        </StyledButton>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -213,7 +230,6 @@ function EmployeesCrud() {
           sx={{
             textAlign: "center",
             fontWeight: "bold",
-            color: theme.palette.mode === "dark" ? "#fff" : "#000",
           }}
         >
           {editing ? "Editar Empleado" : "Añadir Nuevo Empleado"}
@@ -274,9 +290,9 @@ function EmployeesCrud() {
                 />
                 <TextField
                   label="Contraseña"
+                  type="password"
                   variant="outlined"
                   fullWidth
-                  type="password"
                   value={newEmployee.password}
                   error={!!errors.password}
                   helperText={errors.password}
@@ -286,38 +302,26 @@ function EmployeesCrud() {
             )}
           </Box>
         </DialogContent>
-        <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
-          <Button
-            onClick={handleClose}
-            variant="outlined"
-            color="secondary"
-            style={{ textTransform: "none" }}
-          >
+        <DialogActions sx={{ justifyContent: "center", paddingBottom: 2 }}>
+        <StyledButtonCancel onClick={handleClose} style={{ marginRight: "10px" }}>
             Cancelar
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
-            color="primary"
-            style={{ textTransform: "none" }}
-          >
-            {editing ? "Guardar Cambios" : "Añadir"}
-          </Button>
+          </StyledButtonCancel>
+          <StyledButtonSave onClick={handleSubmit}>
+            {editing ? "Actualizar" : "Guardar"}
+          </StyledButtonSave>
         </DialogActions>
       </StyledDialog>
 
       <Dialog open={openConfirm} onClose={cancelDelete}>
-        <DialogTitle sx={{ color: theme.palette.mode === "dark" ? "#fff" : "#000" }}>
-          Confirmar Eliminación
-        </DialogTitle>
+        <DialogTitle>Confirmar Eliminación</DialogTitle>
         <DialogContent>
-          ¿Estás seguro de que deseas eliminar este empleado?
+          ¿Estás seguro de que quieres eliminar este empleado?
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelDelete} color="primary" style={{ textTransform: "none" }}>
+          <Button onClick={cancelDelete} color="inherit">
             Cancelar
           </Button>
-          <Button onClick={confirmDelete} color="error" style={{ textTransform: "none" }}>
+          <Button onClick={confirmDelete} color="error">
             Eliminar
           </Button>
         </DialogActions>
