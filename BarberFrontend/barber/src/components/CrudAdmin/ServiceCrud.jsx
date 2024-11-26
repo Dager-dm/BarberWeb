@@ -29,6 +29,7 @@ const StyledButton = styled(Button)({
   fontWeight: "bold",
   borderRadius: "25px",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
  "&:hover": {
     background: "linear-gradient(to right, #c82333, #a71d2a)",
   },
@@ -41,6 +42,7 @@ const StyledButtonCancel = styled(Button)({
   fontWeight: "bold",
   borderRadius: "25px",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   "&:hover": {
     background: "linear-gradient(to right, #c82333, #a71d2a)",
   },
@@ -53,6 +55,7 @@ const StyledButtonSave = styled(Button)({
   fontWeight: "bold",
   borderRadius: "25px",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
  "&:hover": {
     background: "linear-gradient(to right, #c82333, #a71d2a)"
   },
