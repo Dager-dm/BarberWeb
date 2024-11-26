@@ -21,17 +21,46 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { styled } from "@mui/system";
-import ClientService from "../../services/ClientService"; 
+import ClientService from "../../services/ClientService";
 
 const StyledButton = styled(Button)({
-  background: "linear-gradient(to right, #2575fc, #6a11cb)",
+  background: "linear-gradient(to right, #ff416c, #ff4b2b)",
   color: "#fff",
   padding: "10px 20px",
   fontWeight: "bold",
   borderRadius: "25px",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  transform: "none",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+ "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)",
+  },
+});
+
+const StyledButtonCancel = styled(Button)({
+  background: "Red",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  TextTransform: "none",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
   "&:hover": {
-    background: "linear-gradient(to right, #1f60d0, #5a0dba)",
+    background: "linear-gradient(to right, #c82333, #a71d2a)",
+  },
+});
+
+const StyledButtonSave = styled(Button)({
+  background: "linear-gradient(to right, #7ed957, #5dc82e)",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+ "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)"
   },
 });
 
@@ -152,14 +181,14 @@ function ClientsCrud() {
 
   return (
     <div style={{ padding: "16px" }}>
-        <StyledButton
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleAddClient}
-          style={{ textTransform: "none" }}
-        >
-          Añadir cliente
-        </StyledButton>
+      <StyledButton
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={handleAddClient}
+        style={{ textTransform: "none" }}
+      >
+        Añadir cliente
+      </StyledButton>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -232,22 +261,12 @@ function ClientsCrud() {
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
-          <Button 
-            onClick={handleClose} 
-            variant="outlined" 
-            color="secondary"
-            style={{ textTransform: "none" }} 
-          >
+          <StyledButtonCancel onClick={handleClose} style={{ marginRight: "10px", TextTransform: "none"}}>
             Cancelar
-          </Button>
-          <Button 
-            onClick={handleSubmit} 
-            variant="contained" 
-            color="primary"
-            style={{ textTransform: "none" }} 
-          >
-            {editing ? "Guardar Cambios" : "Añadir"}
-          </Button>
+          </StyledButtonCancel>
+          <StyledButtonSave onClick={handleSubmit} style={{ marginRight: "10px", TextTransform: "none"}}>
+            {editing ? "Actualizar" : "Guardar"}
+          </StyledButtonSave>
         </DialogActions>
       </StyledDialog>
 

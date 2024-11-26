@@ -23,16 +23,39 @@ import { styled } from "@mui/system";
 import ServiceService from "../../services/ServiceService";
 
 const StyledButton = styled(Button)({
-  background: "linear-gradient(to right, #2575fc, #6a11cb)",
+  background: "linear-gradient(to right, #ff416c, #ff4b2b)",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+ "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)",
+  },
+});
+
+const StyledButtonCancel = styled(Button)({
+  background: "Red",
   color: "#fff",
   padding: "10px 20px",
   fontWeight: "bold",
   borderRadius: "25px",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
   "&:hover": {
-    background: "linear-gradient(to right, #1f60d0, #5a0dba)",
+    background: "linear-gradient(to right, #c82333, #a71d2a)",
   },
-  textTransform: "none", // Desactivar mayúsculas predeterminadas
+});
+
+const StyledButtonSave = styled(Button)({
+  background: "linear-gradient(to right, #7ed957, #5dc82e)",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+ "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)"
+  },
 });
 
 const StyledDialog = styled(Dialog)({
@@ -127,7 +150,7 @@ function ServicesCrud() {
         variant="contained"
         startIcon={<AddIcon />}
         onClick={handleAddService}
-        style={{ marginBottom: "16px" }}
+        style={{ marginBottom: "16px", textTransform: "none"}}
       >
         Añadir Servicio
       </StyledButton>
@@ -200,22 +223,12 @@ function ServicesCrud() {
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
-          <Button 
-            onClick={handleClose} 
-            variant="outlined" 
-            color="secondary"
-            style={{ textTransform: "none" }}
-          >
+        <StyledButtonCancel onClick={handleClose} style={{ marginRight: "10px" }}>
             Cancelar
-          </Button>
-          <Button 
-            onClick={handleSubmit} 
-            variant="contained" 
-            color="primary"
-            style={{ textTransform: "none" }}
-          >
-            {editing ? "Guardar Cambios" : "Añadir"}
-          </Button>
+          </StyledButtonCancel>
+          <StyledButtonSave onClick={handleSubmit}>
+            {editing ? "Actualizar" : "Guardar"}
+          </StyledButtonSave>
         </DialogActions>
       </StyledDialog>
 

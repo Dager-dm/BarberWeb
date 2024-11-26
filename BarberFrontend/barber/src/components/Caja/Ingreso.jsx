@@ -20,22 +20,43 @@ import AddIcon from "@mui/icons-material/Add";
 import { styled } from "@mui/system";
 import ArqueoService from "../../services/ArqueoService";
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  background: theme.palette.mode === "dark"
-    ? "linear-gradient(to right, #6a11cb, #2575fc)"
-    : "linear-gradient(to right, #2575fc, #6a11cb)",
+const StyledButton = styled(Button)({
+  background: "linear-gradient(to right, #ff416c, #ff4b2b)",
   color: "#fff",
   padding: "10px 20px",
   fontWeight: "bold",
   borderRadius: "25px",
   boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-  "&:hover": {
-    background: theme.palette.mode === "dark"
-      ? "linear-gradient(to right, #5a0dba, #1f60d0)"
-      : "linear-gradient(to right, #1f60d0, #5a0dba)",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+ "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)",
   },
-}));
+});
 
+const StyledButtonCancel = styled(Button)({
+  background: "Red",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+  "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)",
+  },
+});
+const StyledButtonSave = styled(Button)({
+  background: "linear-gradient(to right, #7ed957, #5dc82e)",
+  color: "#fff",
+  padding: "10px 20px",
+  fontWeight: "bold",
+  borderRadius: "25px",
+  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+ "&:hover": {
+    background: "linear-gradient(to right, #c82333, #a71d2a)"
+  },
+});
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialog-paper": {
     borderRadius: "20px",
@@ -181,36 +202,15 @@ function IngresosCrud() {
               helperText={errors.descripcion}
               onChange={(e) => setNewIngreso({ ...newIngreso, descripcion: e.target.value })}
             />
-            <TextField
-              label="Fecha"
-              variant="outlined"
-              fullWidth
-              type="date"
-              value={newIngreso.fecha}
-              error={!!errors.fecha}
-              helperText={errors.fecha}
-              onChange={(e) => setNewIngreso({ ...newIngreso, fecha: e.target.value })}
-              InputLabelProps={{ shrink: true }}
-            />
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
-          <Button
-            onClick={handleClose}
-            variant="outlined"
-            color="secondary"
-            style={{ textTransform: "none" }}
-          >
+        <StyledButtonCancel onClick={handleClose} style={{ marginRight: "10px" }}>
             Cancelar
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
-            color="primary"
-            style={{ textTransform: "none" }}
-          >
-            Añadir
-          </Button>
+          </StyledButtonCancel>
+          <StyledButtonSave onClick={handleSubmit}>
+           Guardar
+          </StyledButtonSave>
         </DialogActions>
       </StyledDialog>
     </div>

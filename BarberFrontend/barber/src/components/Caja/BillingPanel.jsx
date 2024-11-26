@@ -71,7 +71,7 @@ function BillingPanel({ clients, selectedServices, onClientChange, onRemoveServi
         <button
           onClick={onCheckout}
           disabled={selectedServices.length === 0}
-          className="w-full bg-indigo-600 text-white py-1.5 rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 text-base"
+          className="w-full bg-red-600 text-white py-1.5 rounded-lg font-semibold hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 text-base"
         >
           Registrar Venta
         </button>
