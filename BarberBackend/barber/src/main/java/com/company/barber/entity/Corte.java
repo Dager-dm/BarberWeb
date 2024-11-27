@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -24,9 +25,8 @@ import lombok.Setter;
 @Getter
 @Setter
 
-
-public class Corte extends Movimiento{
-    @OneToMany(mappedBy = "id",cascade = CascadeType.ALL, orphanRemoval = true)
+public class Corte extends Movimiento {
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetalleCorte> detalles;
     @Enumerated(EnumType.STRING)
     private FormaPago formapago;

@@ -6,33 +6,44 @@ import EmployeeService from '../../services/EmployeeService';
 function ArqueoDeCaja() {
   const [registers, setRegisters] = useState([]);
   const [cashiers, setCashiers] = useState([]); // Lista de cajeros
-  const [selectedCashier, setSelectedCashier] = useState(''); // Cajero seleccionado
+  const [selectedCashier, setSelectedCashier] = useState(null); // Cajero seleccionado
   const [initialBalance, setInitialBalance] = useState('');
   const [finalBalance, setFinalBalance] = useState('');
   const [observation, setObservation] = useState('');
   const [currentRegister, setCurrentRegister] = useState(null);
-
-  const [totalIncome, setTotalIncome] = useState(0);
-  const [totalExpenses, setTotalExpenses] = useState(0);
+  const EmpService = new EmployeeService();
+  const ArqService = new ArqueoService();
 
   useEffect(() => {
     // Obtener todos los cajeros si es modo administrador
     const fetchCashiers = async () => {
       try {
-        const employees = await EmployeeService.getEmployees(); // Método para obtener todos los empleados
-        const cashiersList = employees.filter(emp => emp.role === 'Cajero'); // Filtrar solo cajeros
-        setCashiers(cashiersList); 
+        const cashiersList = await EmpService.getCashiers(); // Método para obtener todos los empleados
+        setCashiers(cashiersList);
+        console.log(cashiersList);
       } catch (error) {
         console.error('Error al obtener cajeros:', error);
       }
     };
 
+    // Obtener todos los cajeros si es modo administrador
+    const fetchHistorial = async () => {
+      try {
+        const historial = await ArqService.getHistorial(); // Método para obtener todos los empleados
+        setRegisters(historial);
+        console.log(historial);
+      } catch (error) {
+        console.error('Error al obtener cajeros:', error);
+      }
+    };
+
+
     // Obtener ingresos y egresos
     const fetchFinancialData = async () => {
       try {
-        const income = await ArqueoService.GetIngreso(); 
-        const expenses = await ArqueoService.GetEgreso(); 
-        setTotalExpenses(expenses);
+        //const income = await ArqueoService.GetIngreso(); 
+        //const expenses = await ArqueoService.GetEgreso(); 
+        //setTotalExpenses(expenses);
       } catch (error) {
         console.error('Error al obtener ingresos y egresos:', error);
       }
@@ -40,42 +51,51 @@ function ArqueoDeCaja() {
 
     fetchCashiers();
     fetchFinancialData();
+    fetchHistorial();
+    GetOpenArqueo();
   }, []);
+
+
+  const GetOpenArqueo = async () => {
+    try {
+      const arqueo = await ArqService.getOpenArqueo();
+      if (arqueo !== null && arqueo !== undefined) {
+        setCurrentRegister(arqueo);
+        setInitialBalance(arqueo.saldoBase);
+      }
+    } catch (error) {
+      console.error('Error al obtener ingresos y egresos:', error);
+    }
+  };
+
 
   const handleOpenRegister = async (e) => {
     e.preventDefault();
     if (!selectedCashier || !initialBalance) return;
 
     const newRegister = {
-      id: Date.now(),
-      cashier: selectedCashier,
-      initialBalance: parseFloat(initialBalance),
-      status: 'open',
-      date: new Date().toLocaleString(),
+      cajero: selectedCashier,
+      saldoBase: parseFloat(initialBalance),
+      estado: 'Habilitado',
     };
 
     setRegisters([newRegister, ...registers]);
-    setCurrentRegister(newRegister);
-
-    await ArqueoService.openArqueo(newRegister); // Método vacío por ahora
+    await ArqService.addArqueo(newRegister); // Método vacío por ahora
+    GetOpenArqueo();
   };
 
   const handleCloseRegister = async (e) => {
     e.preventDefault();
     if (!currentRegister || !finalBalance) return;
 
-    const expectedBalance = currentRegister.initialBalance + totalIncome - totalExpenses;
-    const difference = parseFloat(finalBalance) - expectedBalance;
+    const expectedBalance = currentRegister.saldoPrevisto;
+    const difference = parseFloat(currentRegister.diferencia);
 
     const updatedRegister = {
       ...currentRegister,
       finalBalance: parseFloat(finalBalance),
-      totalIncome,
-      totalExpenses,
-      expectedBalance,
       difference,
       observation,
-      status: 'closed',
     };
 
     setRegisters(registers.map((reg) => (reg.id === currentRegister.id ? updatedRegister : reg)));
@@ -84,7 +104,7 @@ function ArqueoDeCaja() {
     setFinalBalance('');
     setObservation('');
 
-    await ArqueoService.closeArqueo(updatedRegister); // Método vacío por ahora
+    await ArqService.CloseArqueo(updatedRegister); // Método vacío por ahora
   };
 
   return (
@@ -96,14 +116,14 @@ function ArqueoDeCaja() {
         <div className="mb-4 text-gray-700">
           <strong>Seleccionar Cajero:</strong>
           <select
-            value={selectedCashier}
-            onChange={(e) => setSelectedCashier(e.target.value)}
+            value={selectedCashier ? JSON.stringify(selectedCashier) : ""}
+            onChange={(e) => setSelectedCashier(JSON.parse(e.target.value))}
             className="ml-2 p-2 border rounded-md"
           >
             <option value="">Seleccionar cajero</option>
             {cashiers.map((cashier) => (
-              <option key={cashier.id} value={cashier.name}>
-                {cashier.name}
+              <option key={cashier.id} value={JSON.stringify(cashier)}>
+                {cashier.nombre}
               </option>
             ))}
           </select>
@@ -124,40 +144,38 @@ function ArqueoDeCaja() {
                 >
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <p className="font-semibold text-lg">{register.cashier}</p>
-                      <p className="text-sm text-gray-500">{register.date}</p>
+                      <p className="font-semibold text-lg">{register.cajero.nombre}</p>
+                      <p className="text-sm text-gray-500">{register.fechaCierre}</p>
                     </div>
                     <span
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        register.status === 'open'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}
+                      className={`px-3 py-1 rounded-full text-sm ${register.estado === 'Habilitado'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-800'
+                        }`}
                     >
-                      {register.status === 'open' ? 'Abierto' : 'Cerrado'}
+                      {register.estado === 'Habilitado' ? 'Abierto' : 'Cerrado'}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-4 mt-4">
                     <div>
                       <p className="text-sm text-gray-600">Saldo Inicial</p>
-                      <p className="font-medium">${register.initialBalance.toLocaleString()}</p>
+                      <p className="font-medium">${register.saldoBase.toLocaleString()}</p>
                     </div>
-                    {register.status === 'closed' && (
+                    {register.estado === 'Dehabilitado' && (
                       <>
                         <div>
                           <p className="text-sm text-gray-600">Saldo Final</p>
-                          <p className="font-medium">${register.finalBalance?.toLocaleString()}</p>
+                          <p className="font-medium">
+                            ${register.saldoReal?.toLocaleString()}
+                          </p>
                         </div>
                         <div>
                           <p className="text-sm text-gray-600">Diferencia</p>
-                          <p
-                            className={`font-medium ${
-                              register.difference && register.difference < 0
-                                ? 'text-red-600'
-                                : 'text-green-600'
-                            }`}
-                          >
-                            ${register.difference?.toLocaleString()}
+                          <p className={`font-medium ${register.diferencia && register.diferencia < 0
+                              ? 'text-red-600'
+                              : 'text-green-600'
+                            }`}>
+                            ${register.diferencia?.toLocaleString()}
                           </p>
                         </div>
                       </>
@@ -201,12 +219,27 @@ function ArqueoDeCaja() {
                 <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg mb-4">
                   <div>
                     <p className="text-sm text-gray-600">Total Ingresos</p>
-                    <p className="font-medium text-green-600">${totalIncome.toLocaleString()}</p>
+                    <p className="font-medium text-green-600">${currentRegister.totalIngreso.toLocaleString()}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Total Egresos</p>
-                    <p className="font-medium text-red-600">${totalExpenses.toLocaleString()}</p>
+                    <p className="font-medium text-red-600">${currentRegister.totalEgreso.toLocaleString()}</p>
                   </div>
+
+                  <div>
+                    <p className="text-sm text-gray-600">Saldo Inicial</p>
+                    <p className="font-medium">
+                      ${currentRegister.saldoBase.toLocaleString()}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-600">Saldo Previsto</p>
+                    <p className="font-medium">
+                      ${currentRegister.saldoPrevisto.toLocaleString()}
+                    </p>
+                  </div>
+
                 </div>
 
                 <div>

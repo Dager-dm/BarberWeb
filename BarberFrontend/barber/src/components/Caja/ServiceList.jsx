@@ -1,7 +1,17 @@
 import React from 'react';
 import { Scissors } from 'lucide-react';
 
-function ServiceList({ services, onServiceSelect }) {
+function ServiceList({ services, loading, onServiceSelect }) {
+  console.log('Servicios en ServiceList:', services);
+
+  if (loading) {
+    return <div>Cargando servicios...</div>;
+  }
+
+  if (services.length === 0) {
+    return <div>No hay servicios disponibles.</div>;
+  }
+
   return (
     <div className="p-4 bg-white rounded-md shadow-md h-[calc(100vh-15rem)] flex flex-col">
       <div className="sticky top-0 bg-white pb-2">
@@ -19,8 +29,8 @@ function ServiceList({ services, onServiceSelect }) {
               onClick={() => onServiceSelect(service)}
               className="p-3 border border-gray-200 rounded-md hover:bg-blue-50 transition-colors duration-200 flex flex-col items-start gap-2"
             >
-              <span className="font-semibold text-lg text-gray-800">{service.name}</span>
-              <span className="text-green-600 font-semibold text-lg">${service.price.toFixed(2)}</span>
+              <span className="font-semibold text-lg text-gray-800">{service.nombre}</span>
+              <span className="text-green-600 font-semibold text-lg">${service.precio.toFixed(2)}</span>
             </button>
           ))}
         </div>
@@ -30,4 +40,5 @@ function ServiceList({ services, onServiceSelect }) {
 }
 
 export default ServiceList;
+
 

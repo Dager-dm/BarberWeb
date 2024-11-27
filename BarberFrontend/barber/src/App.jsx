@@ -9,8 +9,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Definir la ruta principal*/}
-        <Route path="/" element={<Administrador/>} />
+        <Route path="/Administradir" element={<Administrador />} /> 
+        <Route path="/Cajero" element={<Cajero />} />
+        <Route path="/" element={<Login />} />
       </Routes>
     </Router>
   )

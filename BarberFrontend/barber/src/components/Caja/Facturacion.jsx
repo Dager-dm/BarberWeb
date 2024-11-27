@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ServiceList from '../Caja/ServiceList';
 import BillingPanel from '../Caja/BillingPanel';
 import ClientService from '../../services/ClientService';
-import Service from '../../services/ServiceService';
+import ServiceService from '../../services/ServiceService';
 import ArqueoService from '../../services/ArqueoService';
 
 const Facturacion = () => {
@@ -11,37 +11,44 @@ const Facturacion = () => {
   const [selectedServices, setSelectedServices] = useState([]);
   const [selectedClient, setSelectedClient] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
+  const [loadingServices, setLoadingServices] = useState(true); // Estado de carga de servicios
+  const [loadingClients, setLoadingClients] = useState(true); // Estado de carga de clientes
+  const SeService = new ServiceService();
+  const CService = new ClientService();
+  const ArqService = new ArqueoService();
 
   // Método para obtener servicios
   const obtenerServicios = async () => {
     try {
-      const response = await Service.obtenerServicios();
-      setServices(response.data);
-
-      console.log('Servicios obtenidos correctamente');
+      const response = await SeService.getServices();
+      console.log('Respuesta de la API de servicios:', response);
+      setServices(response);
+      console.log('Servicios establecidos en el estado:', response);
     } catch (error) {
       console.error('Error al obtener servicios:', error);
+    } finally {
+      setLoadingServices(false);
     }
   };
 
   // Método para obtener clientes
   const obtenerClientes = async () => {
     try {
-      const response = await ClientService.obtenerClientes();
-      setClients(response.data);
-
-      console.log('Clientes obtenidos correctamente');
+      const response = await CService.getClientes();
+      console.log('Respuesta de la API de clientes:', response);
+      setClients(response);
+      console.log('Clientes establecidos en el estado:', response);
     } catch (error) {
       console.error('Error al obtener clientes:', error);
+    } finally {
+      setLoadingClients(false);
     }
   };
 
   // Método para registrar un corte
   const registrarCorte = async (data) => {
     try {
-      await ArqueoService.registrarCorte(data);
-
-      console.log('Corte registrado correctamente:', data);
+      await ArqService.SetCorte(data);
     } catch (error) {
       console.error('Error al registrar corte:', error);
     }
@@ -73,7 +80,7 @@ const Facturacion = () => {
   };
 
   const handleClientChange = (e) => {
-    setSelectedClient(e.target.value);
+    setSelectedClient(JSON.parse(e.target.value));
   };
 
   const handlePaymentMethodChange = (e) => {
@@ -89,16 +96,18 @@ const Facturacion = () => {
       alert('Por favor seleccione un método de pago');
       return;
     }
-
+    
     const dataToSend = {
-      clientId: selectedClient,
+      client: selectedClient,
       services: selectedServices,
       paymentMethod,
-      total: selectedServices.reduce((sum, service) => sum + service.price, 0),
+      total: selectedServices.reduce((sum, service) => sum + service.precio, 0),
       date: new Date(),
     };
+    
+    console.log(dataToSend); 
 
-    await registrarCorte(dataToSend);
+    console.log(await registrarCorte(dataToSend));
 
     setSelectedServices([]);
     setSelectedClient('');
@@ -111,6 +120,7 @@ const Facturacion = () => {
         <div className="w-[70%] h-full">
           <ServiceList 
             services={services}
+            loading={loadingServices} // Pasamos el estado de carga
             onServiceSelect={handleServiceSelect}
           />
         </div>

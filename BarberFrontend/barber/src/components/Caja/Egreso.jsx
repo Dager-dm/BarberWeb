@@ -74,6 +74,8 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
+const ArqService = new ArqueoService();
+
 function Egresos() {
   const theme = useTheme();
   const [rows, setRows] = React.useState([]);
@@ -87,9 +89,9 @@ function Egresos() {
 
   // Cargar egresos desde el backend
   const fetchEgresos = async () => {
-    const egresos = await ArqueoService.GetEgreso();
-    setRows(egresos);
-    console.log("Egresos cargados:", egresos);
+    const egresos = await ArqService.getOpenArqueo();
+    setRows(egresos.egresos);
+    console.log("Egresos cargados:", egresos.egresos);
   };
 
   React.useEffect(() => {
@@ -100,19 +102,19 @@ function Egresos() {
     let temp = {};
     temp.valor = newEgreso.valor ? "" : "El valor es obligatorio.";
     temp.descripcion = newEgreso.descripcion ? "" : "La descripción es obligatoria.";
-    temp.fecha = newEgreso.fecha ? "" : "La fecha es obligatoria.";
     setErrors(temp);
     return Object.values(temp).every((x) => x === "");
   };
 
-  const handleAddEgreso = () => {
+  const handleAddEgreso = async() => {
     setNewEgreso({
       valor: "",
       descripcion: "",
-      fecha: "",
+      fecha: new Date(),
     });
     setErrors({});
     setOpen(true);
+
   };
 
   const handleClose = () => {
@@ -126,10 +128,12 @@ function Egresos() {
   };
 
   const handleSubmit = async () => {
+
     if (!validate()) return;
 
+    console.log("dentro del evento")
     // Añadir nuevo egreso
-    await ArqueoService.AddEgreso(newEgreso);
+   console.log( await ArqService.SetEgreso(newEgreso));
     console.log("Egreso añadido:", newEgreso);
     handleClose();
     fetchEgresos(); // Recargar la lista de egresos
@@ -203,7 +207,7 @@ function Egresos() {
               value={newEgreso.descripcion}
               error={!!errors.descripcion}
               helperText={errors.descripcion}
-              onChange={(e) => setNewEgreso({ ...newEgreso, descripcion: e.target.value })}
+              onChange={(e) => setNewEgreso({ ...newEgreso, descripcion: e.target.value  })}
             />
           </Box>
         </DialogContent>

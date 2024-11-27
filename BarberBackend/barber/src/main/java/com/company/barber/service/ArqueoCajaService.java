@@ -21,35 +21,11 @@ public class ArqueoCajaService {
     }
 
     public List<ArqueoCaja> GetHistorial() {
-        return (List<ArqueoCaja>) Arqueorepository.findByEstado(EstadoCrud.Deshabilitado);
+        return (List<ArqueoCaja>) Arqueorepository.findAll();
     }
 
     public ArqueoCaja GetOpenArqueo() {
         return (ArqueoCaja) Arqueorepository.findFirstByEstado(EstadoCrud.Habilitado);
-    }
-
-    public ArqueoCaja SetMovimientos(Long id, ArqueoCaja updatedEntity) {
-        ArqueoCaja arqueoCaja = Arqueorepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Este Arqueo no está registrado " + id));
-
-        if (updatedEntity.getCortes()!= null) {
-            SetearCortes(arqueoCaja, updatedEntity.getCortes());
-            arqueoCaja.CalcularIngresos();
-            
-        }
-        if (updatedEntity.getEgresos()!= null) {
-            SetearEgresos(arqueoCaja, updatedEntity.getEgresos());
-            arqueoCaja.CalcularEgresos();
-            
-        }
-        if (updatedEntity.getIngresos()!= null) {
-            SetearIngresos(arqueoCaja, updatedEntity.getIngresos());
-            arqueoCaja.CalcularIngresos();
-            
-        }
-        
-        arqueoCaja.CalcularSaldoPrevisto();
-        return Arqueorepository.save(arqueoCaja);
     }
 
     public String CloseArqueo(ArqueoCaja arqueo, Long id) {
@@ -57,7 +33,6 @@ public class ArqueoCajaService {
             ArqueoCaja arqueoCaja = Arqueorepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Este Arqueo no está registrado " + arqueo.getId()));
             arqueoCaja.setEstado(EstadoCrud.Deshabilitado);
-            arqueoCaja.setDiferencia(arqueo.getDiferencia());
             arqueoCaja.setFechaCierre(arqueo.getFechaCierre());
             arqueoCaja.setObservacion(arqueo.getObservacion());
             arqueoCaja.setSaldoReal(arqueo.getSaldoReal());
@@ -75,26 +50,50 @@ public class ArqueoCajaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Este servicio no está registrado " + id));
     }
 
-    private void SetearCortes(ArqueoCaja arqueo, List<Corte> lst){
-     
-        for (Corte c : arqueo.getCortes() ) {
-            c.setArqueocaja(arqueo);
+    public ArqueoCaja SetMovimientos(Long id, ArqueoCaja updatedEntity) {
+        ArqueoCaja arqueoCaja = Arqueorepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Este Arqueo no está registrado " + id));
+    
+        if (updatedEntity.getCortes() != null) {
+            SetearCortes(arqueoCaja, updatedEntity.getCortes());
+            arqueoCaja.CalcularIngresos();
         }
-        arqueo.getCortes().addAll(lst);
+        if (updatedEntity.getEgresos() != null) {
+            SetearEgresos(arqueoCaja, updatedEntity.getEgresos());
+            arqueoCaja.CalcularEgresos();
+        }
+        if (updatedEntity.getIngresos() != null) {
+            SetearIngresos(arqueoCaja, updatedEntity.getIngresos());
+            arqueoCaja.CalcularIngresos();
+        }
+    
+        arqueoCaja.CalcularSaldoPrevisto();
+        return Arqueorepository.save(arqueoCaja);
     }
+    
 
-    private void SetearIngresos(ArqueoCaja arqueo, List<Ingreso> lst){
-        for (Ingreso c : arqueo.getIngresos() ) {
-            c.setArqueocaja(arqueo);
+    private void SetearCortes(ArqueoCaja arqueo, List<Corte> lst) {
+        arqueo.getCortes().clear(); // Limpia la lista actual
+        for (Corte c : lst) {
+            c.setArqueocaja(arqueo); // Establece la relación del lado hijo
+            arqueo.getCortes().add(c); // Agrega a la lista del padre
         }
-        arqueo.getIngresos().addAll(lst);
     }
-
-    private void SetearEgresos(ArqueoCaja arqueo, List<Egreso> lst){
-        for (Egreso c : arqueo.getEgresos() ) {
-            c.setArqueocaja(arqueo);
+    
+    private void SetearIngresos(ArqueoCaja arqueo, List<Ingreso> lst) {
+        arqueo.getIngresos().clear();
+        for (Ingreso i : lst) {
+            i.setArqueocaja(arqueo);
+            arqueo.getIngresos().add(i);
         }
-        arqueo.getEgresos().addAll(lst);
+    }
+    
+    private void SetearEgresos(ArqueoCaja arqueo, List<Egreso> lst) {
+        arqueo.getEgresos().clear();
+        for (Egreso e : lst) {
+            e.setArqueocaja(arqueo);
+            arqueo.getEgresos().add(e);
+        }
     }
 
 }

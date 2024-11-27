@@ -107,8 +107,6 @@ function ClientsCrud() {
     let temp = {};
     temp.cedula = newClient.cedula ? "" : "La cédula es obligatoria.";
     temp.name = newClient.name ? "" : "El nombre es obligatorio.";
-    temp.email = newClient.email ? "" : "El correo es obligatorio.";
-    temp.password = newClient.password ? "" : "La contraseña es obligatoria.";
     temp.phone = newClient.phone ? "" : "El teléfono es obligatorio.";
     setErrors(temp);
     return Object.values(temp).every((x) => x === "");
@@ -203,7 +201,6 @@ function ClientsCrud() {
               <TableRow key={row.cedula}>
                 <TableCell>{row.cedula}</TableCell>
                 <TableCell>{row.nombre}</TableCell>
-                <TableCell>{row.usuario.correo}</TableCell>
                 <TableCell>{row.telefono}</TableCell>
                 <TableCell>
                   <IconButton color="primary" onClick={() => handleEdit(row.id)}>

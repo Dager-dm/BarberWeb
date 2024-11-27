@@ -15,6 +15,9 @@ import lombok.Setter;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Temporal;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.OneToMany;
 
 @Entity
@@ -40,11 +43,11 @@ public class ArqueoCaja {
     @ManyToOne
     @JoinColumn(name = "id_cajero")
     private Cajero cajero;
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "arqueocaja", cascade = CascadeType.ALL)
     private List<Egreso> egresos;
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "arqueocaja", cascade = CascadeType.ALL)
     private List<Ingreso> ingresos;
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "arqueocaja", cascade = CascadeType.ALL)
     private List<Corte> cortes;
 
      

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Trash2, Receipt, CreditCard } from 'lucide-react';
 
-function BillingPanel({ clients, selectedServices, onClientChange, onRemoveService, onCheckout,onPaymentMethodChange }) {
-  const total = selectedServices.reduce((sum, service) => sum + service.price, 0);
+function BillingPanel({ clients, selectedServices, onClientChange, onRemoveService, onCheckout, onPaymentMethodChange }) {
+  const total = selectedServices.reduce((sum, service) => sum + service.precio, 0);
 
   return (
     <div className="p-3 bg-white rounded-lg shadow-md h-[calc(100vh-15rem)] w-[320px] flex flex-col">
@@ -17,8 +17,8 @@ function BillingPanel({ clients, selectedServices, onClientChange, onRemoveServi
       >
         <option value="">Seleccionar Cliente</option>
         {clients.map((client) => (
-          <option key={client.id} value={client.id}>
-            {client.name}
+          <option key={client.id} value={JSON.stringify(client)}>
+            {client.nombre}
           </option>
         ))}
       </select>
@@ -31,8 +31,8 @@ function BillingPanel({ clients, selectedServices, onClientChange, onRemoveServi
             className="flex items-center justify-between p-2 bg-gray-50 rounded-lg mb-2"
           >
             <div>
-              <p className="font-medium text-sm">{service.name}</p>
-              <p className="text-green-600 text-sm">${service.price.toFixed(2)}</p>
+              <p className="font-medium text-sm">{service.nombre}</p>
+              <p className="text-green-600 text-sm">${service.precio.toFixed(2)}</p>
             </div>
             <button
               onClick={() => onRemoveService(service.instanceId)}
@@ -64,8 +64,7 @@ function BillingPanel({ clients, selectedServices, onClientChange, onRemoveServi
           >
             <option value="">Seleccionar método de pago</option>
             <option value="efectivo">Efectivo</option>
-            <option value="tarjeta">Tarjeta de Crédito/Débito</option>
-            <option value="transferencia">Transferencia Bancaria</option>
+            <option value="tarjeta">Transferencia</option>
           </select>
         </div>
         <button

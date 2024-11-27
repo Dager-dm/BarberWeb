@@ -20,6 +20,7 @@ import InfoIcon from "@mui/icons-material/Info";
 import { styled } from "@mui/system";
 import useTheme from "@mui/material/styles/useTheme";
 import ArqueoService from "../../services/ArqueoService"; // Asegúrate de que el servicio esté correctamente importado
+import ServiceService from "../../services/ServiceService";
 
 const StyledDialog = styled(Dialog)({
   "& .MuiDialog-paper": {
@@ -35,13 +36,14 @@ function Cortes() {
   const [rows, setRows] = useState([]); // Estado para almacenar los cortes
   const [openDetails, setOpenDetails] = useState(false);
   const [selectedCut, setSelectedCut] = useState(null);
-
+  const SeService = new ServiceService();
+  const ArqService = new ArqueoService();
   // Cargar cortes desde el backend
   const fetchCuts = async () => {
     try {
-      const cuts = await ArqueoService.getCuts(); // Asegúrate de que este método exista en ArqueoService
-      setRows(cuts); // Actualiza el estado con los datos recibidos
-      console.log("Cortes cargados:", cuts);
+      const cuts = await ArqService.getOpenArqueo(); // Asegúrate de que este método exista en ArqueoService
+      setRows(cuts.cortes); // Actualiza el estado con los datos recibidos
+      console.log("Cortes cargados:", cuts.cortes);
     } catch (error) {
       console.error("Error al cargar los cortes:", error);
     }
@@ -70,7 +72,7 @@ function Cortes() {
         <TableHead>
           <TableRow>
             <TableCell>Cliente</TableCell>
-            <TableCell>Valor Total</TableCell>
+            <TableCell>Valor</TableCell>
             <TableCell>Fecha</TableCell>
             <TableCell>Detalles</TableCell>
           </TableRow>
@@ -79,9 +81,9 @@ function Cortes() {
           {Array.isArray(rows) && rows.length > 0 ? (
             rows.map((row) => (
               <TableRow key={row.id || row._id}> {/* Usa un id único para cada fila */}
-                <TableCell>{row.cliente || "Desconocido"}</TableCell> {/* Validación de cliente */}
+                <TableCell>{row.cliente.nombre || "Desconocido"}</TableCell> {/* Validación de cliente */}
                 <TableCell>
-                  ${row.valorTotal ? row.valorTotal.toFixed(2) : "0.00"} {/* Validación de valorTotal */}
+                  ${row.valor ? row.valor.toFixed(2) : "0.00"} {/* Validación de valorTotal */}
                 </TableCell>
                 <TableCell>
                   {row.fecha
@@ -136,10 +138,10 @@ function Cortes() {
               }}
             >
               <Typography>
-                <strong>Cliente:</strong> {selectedCut.cliente}
+                <strong>Cliente:</strong> {selectedCut.cliente.nombre}
               </Typography>
               <Typography>
-                <strong>Valor Total:</strong> ${selectedCut.valorTotal.toFixed(2)}
+                <strong>Valor Total:</strong> ${selectedCut.valor.toFixed(2)}
               </Typography>
               <Typography>
                 <strong>Fecha:</strong>{" "}

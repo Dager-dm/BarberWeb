@@ -70,6 +70,8 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
+const ArqService = new ArqueoService();
+
 function IngresosCrud() {
   const theme = useTheme();
 
@@ -84,20 +86,25 @@ function IngresosCrud() {
 
   // Cargar ingresos desde el backend
   const fetchIngresos = async () => {
-    const ingresos = await ArqueoService.GetIngreso();
-    setRows(ingresos);
-    console.log("Ingresos cargados:", ingresos);
+    const ingresos = await ArqService.getOpenArqueo();
+    if (ingresos && ingresos.ingresos) {
+       setRows(ingresos.ingresos);
+       } else { 
+        console.error("Formato de datos inesperado:", ingresos);
+       }
+    console.log("Ingresos cargados:", ingresos.ingresos);
   };
 
   React.useEffect(() => {
     fetchIngresos();
+    console.log("Rows:", rows);
+
   }, []);
 
   const validate = () => {
     let temp = {};
     temp.valor = newIngreso.valor ? "" : "El valor es obligatorio.";
     temp.descripcion = newIngreso.descripcion ? "" : "La descripción es obligatoria.";
-    temp.fecha = newIngreso.fecha ? "" : "La fecha es obligatoria.";
     setErrors(temp);
     return Object.values(temp).every((x) => x === "");
   };
@@ -106,7 +113,7 @@ function IngresosCrud() {
     setNewIngreso({
       valor: "",
       descripcion: "",
-      fecha: "",
+      fecha: new Date(),
     });
     setErrors({});
     setOpen(true);
@@ -126,7 +133,7 @@ function IngresosCrud() {
     if (!validate()) return;
 
     // Añadir nuevo ingreso
-    await ArqueoService.AddIngreso(newIngreso);
+    await ArqService.SetIngreso(newIngreso);
     console.log("Ingreso añadido:", newIngreso);
     handleClose();
     fetchIngresos(); // Recargar la lista de ingresos
