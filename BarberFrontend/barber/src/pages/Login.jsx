@@ -7,23 +7,11 @@ function Login() {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState({ type: '', message: '' });
-  const navigate = useNavigate();
-const Lservice = new LoginService();
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const validatePassword = (password) => password.length >= 6;
-
-  /*const validateLoginForm = () => {
-    const newErrors = {};
-    
-    //if (!validateEmail(loginData.email)) newErrors.loginEmail = 'Email inválido';
-    //if (!validatePassword(loginData.password)) newErrors.loginPassword = 'La contraseña debe tener al menos 6 caracteres';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };*/
+  const navigate = useNavigate();const Lservice = new LoginService();
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-   // if (!validateLoginForm()) return;
+
     
     setIsLoading(true);
     setStatusMessage({ type: '', message: '' });
