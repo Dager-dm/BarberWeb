@@ -13,8 +13,8 @@ function ServiceList({ services, loading, onServiceSelect }) {
   }
 
   return (
-    <div className="p-4 bg-white rounded-md shadow-md h-[calc(100vh-15rem)] flex flex-col">
-      <div className="sticky top-0 bg-white pb-2">
+    <div className="p-4 pt-6 bg-white rounded-md shadow-xl h-[calc(100vh-15rem)] flex flex-col sticky top-[-1px]">
+      <div className="sticky top-[-1px] z-10 bg-white pb-2">
         <h2 className="text-2xl font-bold mb-4 text-gray-800 flex items-center gap-2">
           <Scissors className="w-6 h-6" />
           Servicios Disponibles

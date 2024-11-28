@@ -5,12 +5,11 @@ class ArqueoService {
   }
 
   static transformArqueoData(Arqueo) {
-    const currentDate = new Date();
-    const formattedDate = currentDate.toISOString().split('T')[0];
+
     console.log(Arqueo);
 
     const ArqueoData = {
-      fechaInicio: formattedDate, // Puedes cambiar esto a la fecha actual si lo necesitas dinámico
+      fechaInicio: new Date(), // Puedes cambiar esto a la fecha actual si lo necesitas dinámico
       saldoBase: Arqueo.saldoBase, // Ajusta según sea necesario
       totalEgreso: 0,
       saldoPrevisto:Arqueo.saldoBase,
@@ -36,11 +35,8 @@ class ArqueoService {
   }
 
   static transformArqueoCloseData(Arqueo) {
-    const currentDate = new Date();
-    const formattedDate = currentDate.toISOString().split('T')[0];
-
     const ArqueoData = {
-      fechaCierre: formattedDate, // Puedes cambiar esto a la fecha actual si lo necesitas dinámico
+      fechaCierre: new Date(), // Puedes cambiar esto a la fecha actual si lo necesitas dinámico
       saldoReal: Arqueo.finalBalance,
       observacion: Arqueo.observation
     };
@@ -52,7 +48,7 @@ class ArqueoService {
       cortes: [
         {
           valor: dataToSend.total,
-          fecha: dataToSend.date.toISOString().split('T')[0], // Formatear fecha a 'YYYY-MM-DD'
+          fecha: dataToSend.date,
           cliente: {
             id: dataToSend.client.id,
             nombre: dataToSend.client.nombre,
@@ -71,7 +67,7 @@ class ArqueoService {
                }
              ] 
             })), 
-          formapago: dataToSend.paymentMethod = "efectivo" ? "Efectivo" : "Transferencia"
+            formapago: dataToSend.paymentMethod === "efectivo" ? "Efectivo" : "Transferencia"
         } 
       ] 
     }; 
@@ -192,7 +188,7 @@ class ArqueoService {
       });
       return await response.json();
     } catch (error) {
-      console.error(`Error updating Arqueo with ID ${ArqueoC.id}:`, error);
+      console.error(`Error updating Arqueo with ID:`, error);
       throw error;
     }
   }

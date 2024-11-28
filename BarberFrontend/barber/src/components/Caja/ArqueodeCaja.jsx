@@ -14,17 +14,58 @@ function ArqueoDeCaja() {
   const EmpService = new EmployeeService();
   const ArqService = new ArqueoService();
 
+  const fetchHistorial = async () => {
+    try {
+      const historial = await ArqService.getHistorial(); // Método para obtener todos los registros
+      setRegisters(historial);
+      console.log(historial);
+    } catch (error) {
+      console.error('Error al obtener historial:', error);
+    }
+  };
+
+  const formatDateTime = (date) => {
+    // Si es una cadena, conviértela a un objeto Date
+    if (typeof date === 'string') {
+      date = new Date(date);
+    }
+
+    // Si no es una instancia de Date válida, devuelve un mensaje predeterminado
+    if (!(date instanceof Date) || isNaN(date)) {
+      return "Fecha no válida";
+    }
+
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const dateString = date.toLocaleDateString(undefined, options);
+
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12; // La hora 0 debería ser 12
+    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+
+    const timeString = `${hours}:${minutesStr} ${ampm}`;
+
+    return `${dateString}, ${timeString}`;
+  };
+
+
+
+
+
+  const fetchCashiers = async () => {
+    try {
+      const cashiersList = await EmpService.getCashiers(); // Método para obtener todos los empleados
+      setCashiers(cashiersList);
+      console.log(cashiersList);
+    } catch (error) {
+      console.error('Error al obtener cajeros:', error);
+    }
+  };
+
   useEffect(() => {
     // Obtener todos los cajeros si es modo administrador
-    const fetchCashiers = async () => {
-      try {
-        const cashiersList = await EmpService.getCashiers(); // Método para obtener todos los empleados
-        setCashiers(cashiersList);
-        console.log(cashiersList);
-      } catch (error) {
-        console.error('Error al obtener cajeros:', error);
-      }
-    };
+
 
     // Obtener todos los cajeros si es modo administrador
     const fetchHistorial = async () => {
@@ -105,29 +146,18 @@ function ArqueoDeCaja() {
     setObservation('');
 
     await ArqService.CloseArqueo(updatedRegister); // Método vacío por ahora
+    fetchHistorial();
+
+
+
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Sistema de Arqueo de Caja</h1>
+    <div className="min-h-[70vh] bg-white-100 p-3" style={{ maxHeight: '400px' }}>
+      <div className="max-w-7xl mx-auto px-4 py-8" >
+
 
         {/* Mostrar todos los cajeros si es modo administrador */}
-        <div className="mb-4 text-gray-700">
-          <strong>Seleccionar Cajero:</strong>
-          <select
-            value={selectedCashier ? JSON.stringify(selectedCashier) : ""}
-            onChange={(e) => setSelectedCashier(JSON.parse(e.target.value))}
-            className="ml-2 p-2 border rounded-md"
-          >
-            <option value="">Seleccionar cajero</option>
-            {cashiers.map((cashier) => (
-              <option key={cashier.id} value={JSON.stringify(cashier)}>
-                {cashier.nombre}
-              </option>
-            ))}
-          </select>
-        </div>
 
         <div className="flex gap-8">
           {/* Historial de Arqueos */}
@@ -136,7 +166,10 @@ function ArqueoDeCaja() {
               <Clock className="w-5 h-5" />
               Historial de Arqueos
             </h2>
-            <div className="space-y-4">
+            <div
+              className="space-y-4 overflow-y-auto"
+              style={{ maxHeight: '350px' }} // Limita la altura y permite el scroll
+            >
               {registers.map((register) => (
                 <div
                   key={register.id}
@@ -145,7 +178,7 @@ function ArqueoDeCaja() {
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <p className="font-semibold text-lg">{register.cajero.nombre}</p>
-                      <p className="text-sm text-gray-500">{register.fechaCierre}</p>
+                      <p className="text-sm text-gray-500"> {formatDateTime(new Date(register.fechaCierre))}</p>
                     </div>
                     <span
                       className={`px-3 py-1 rounded-full text-sm ${register.estado === 'Habilitado'
@@ -161,7 +194,7 @@ function ArqueoDeCaja() {
                       <p className="text-sm text-gray-600">Saldo Inicial</p>
                       <p className="font-medium">${register.saldoBase.toLocaleString()}</p>
                     </div>
-                    {register.estado === 'Dehabilitado' && (
+                    {register.estado === 'Deshabilitado' && (
                       <>
                         <div>
                           <p className="text-sm text-gray-600">Saldo Final</p>
@@ -172,12 +205,27 @@ function ArqueoDeCaja() {
                         <div>
                           <p className="text-sm text-gray-600">Diferencia</p>
                           <p className={`font-medium ${register.diferencia && register.diferencia < 0
-                              ? 'text-red-600'
-                              : 'text-green-600'
+                            ? 'text-red-600'
+                            : 'text-green-600'
                             }`}>
                             ${register.diferencia?.toLocaleString()}
                           </p>
                         </div>
+
+                        <div>
+                          <p className="text-sm text-gray-600">Saldo Previsto</p>
+                          <p className="font-medium">
+                            ${register.saldoPrevisto?.toLocaleString()}
+                          </p>
+                        </div>
+
+                        <div>
+                          <p className="text-sm text-gray-600">Observaciones</p>
+                          <p className="font-medium">
+                            {register.observacion}
+                          </p>
+                        </div>
+
                       </>
                     )}
                   </div>
@@ -186,6 +234,7 @@ function ArqueoDeCaja() {
               {registers.length === 0 && <p className="text-gray-500 text-center py-8">No hay arqueos registrados</p>}
             </div>
           </div>
+
 
           {/* Formulario de Arqueo */}
           <div className="w-[30%] bg-white rounded-lg shadow-md p-6">
@@ -197,6 +246,21 @@ function ArqueoDeCaja() {
             {!currentRegister ? (
               <form onSubmit={handleOpenRegister} className="space-y-4">
                 <div>
+                  <div className="mb-4 text-gray-700">
+                    <strong>Seleccionar Cajero:</strong>
+                    <select
+                      value={selectedCashier ? JSON.stringify(selectedCashier) : ""}
+                      onChange={(e) => setSelectedCashier(JSON.parse(e.target.value))}
+                      className="ml-2 p-2 border rounded-md"
+                    >
+                      <option value="">Seleccionar cajero</option>
+                      {cashiers.map((cashier) => (
+                        <option key={cashier.id} value={JSON.stringify(cashier)}>
+                          {cashier.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Saldo Base</label>
                   <input
                     type="number"
@@ -209,7 +273,7 @@ function ArqueoDeCaja() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Iniciar Arqueo
                 </button>

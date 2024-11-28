@@ -23,6 +23,6 @@ public class Movimiento {
     private Long id;
     private Long valor;
     private String descripcion;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date Fecha;
 }

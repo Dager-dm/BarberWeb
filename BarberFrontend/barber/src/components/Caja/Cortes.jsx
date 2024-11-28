@@ -128,28 +128,54 @@ function Cortes() {
           Detalles del Corte
         </DialogTitle>
         <DialogContent>
-          {selectedCut && (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 2,
-                paddingTop: 2,
-              }}
-            >
-              <Typography>
-                <strong>Cliente:</strong> {selectedCut.cliente.nombre}
-              </Typography>
-              <Typography>
-                <strong>Valor Total:</strong> ${selectedCut.valor.toFixed(2)}
-              </Typography>
-              <Typography>
-                <strong>Fecha:</strong>{" "}
-                {new Date(selectedCut.fecha).toLocaleDateString()}
-              </Typography>
-            </Box>
-          )}
-        </DialogContent>
+  {selectedCut && (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        paddingTop: 2,
+      }}
+    >
+      <Typography>
+        <strong>Cliente:</strong> {selectedCut.cliente.nombre}
+      </Typography>
+      <Typography>
+        <strong>Valor Total:</strong> ${selectedCut.valor.toFixed(2)}
+      </Typography>
+      <Typography>
+        <strong>Fecha:</strong> {new Date(selectedCut.fecha).toLocaleDateString()}
+      </Typography>
+      
+      {/* Mostrar los detalles del corte */}
+      <Typography variant="h6" gutterBottom>
+        Detalles del Corte:
+      </Typography>
+      {selectedCut.detalles && selectedCut.detalles.length > 0 ? (
+        selectedCut.detalles.map((detalle, index) => (
+          <Box key={index} sx={{ paddingLeft: 2, paddingTop: 1 }}>
+            <Typography>
+              <strong>Subtotal:</strong> ${detalle.subtotal.toFixed(2)}
+            </Typography>
+            <Typography>
+              <strong>Servicios:</strong>
+            </Typography>
+            <ul>
+              {detalle.servicios.map((servicio, idx) => (
+                <li key={idx}>
+                  {servicio.nombre} - ${servicio.precio.toFixed(2)} - {servicio.duracion}
+                </li>
+              ))}
+            </ul>
+          </Box>
+        ))
+      ) : (
+        <Typography>No hay detalles disponibles.</Typography>
+      )}
+    </Box>
+  )}
+</DialogContent>
+
         <DialogActions sx={{ justifyContent: "center", padding: 2 }}>
           <Button
             onClick={handleCloseDetails}

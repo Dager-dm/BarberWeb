@@ -3,21 +3,6 @@ class LoginService {
     this.baseURL = "http://localhost:8082";
   }
 
-  /*Iniciar sesión
-  static async login(email, password) {
-
-    const l ={
-      email: email,
-      contraseña: password 
-    }
-
-    return await this.validarUsuario(l);
-    return {
-      success: true,
-      token: "abc123xyz", // Simulación del token
-      message: "Inicio de sesión exitoso"
-    };
-  }*/
 
   // Obtener el usuario actual
   static getCurrentUser() {

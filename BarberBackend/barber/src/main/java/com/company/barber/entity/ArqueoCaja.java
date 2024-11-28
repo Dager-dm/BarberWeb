@@ -15,9 +15,6 @@ import lombok.Setter;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Temporal;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.OneToMany;
 
 @Entity
@@ -27,9 +24,9 @@ public class ArqueoCaja {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date FechaInicio;
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date FechaCierre;
     private Long SaldoBase;
     private Long SaldoPrevisto;
@@ -50,34 +47,53 @@ public class ArqueoCaja {
     @OneToMany(mappedBy = "arqueocaja", cascade = CascadeType.ALL)
     private List<Corte> cortes;
 
-     
-    public void CalcularSaldoPrevisto(){
-       SaldoPrevisto=SaldoBase+(TotalIngreso - TotalEgreso);
-    }
 
-    public void CalcularIngresos(){
+
+
+
+
+    public void CalcularSaldoPrevisto(){
+        System.out.println("dentro de la funcion");
+            for (Corte corte : cortes) {
+                System.out.println(SaldoPrevisto);
+                if (corte.getFormapago().equals(FormaPago.Efectivo)) {
+                    SaldoPrevisto=SaldoBase+corte.getValor();
+                    System.out.println("dentro del if");
+                    System.out.println(corte.getFormapago());
+                }
+            }
+
+            for (Ingreso i : ingresos) {
+                SaldoPrevisto = SaldoPrevisto + i.getValor();
+            }
+
+            for (Egreso e : egresos) {
+                SaldoPrevisto = SaldoPrevisto - e.getValor();
+            }
+
+        }
+
+
+    public void CalcularIngresos() {
 
         for (Corte corte : cortes) {
-            if (corte.getFormapago().equals(FormaPago.Efectivo)) {
-                TotalIngreso=TotalIngreso+corte.getValor();
-            }
+            TotalIngreso = TotalIngreso + corte.getValor();
         }
 
         for (Ingreso i : ingresos) {
-            TotalIngreso=TotalIngreso+i.getValor();
+            TotalIngreso = TotalIngreso + i.getValor();
         }
 
     }
 
-    public void CalcularEgresos(){
-        for(Egreso e: egresos){
-            TotalEgreso=TotalEgreso+e.getValor();
+    public void CalcularEgresos() {
+        for (Egreso e : egresos) {
+            TotalEgreso = TotalEgreso + e.getValor();
         }
     }
 
-    public void CalcularDiferencia(){
-        Diferencia=SaldoPrevisto-SaldoReal;
+    public void CalcularDiferencia() {
+        Diferencia =  SaldoReal - SaldoPrevisto ;
     }
-    
 
 }

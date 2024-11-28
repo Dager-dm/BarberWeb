@@ -1,8 +1,13 @@
 package com.company.barber.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.company.barber.entity.ArqueoCaja;
 import com.company.barber.entity.Corte;
@@ -28,22 +33,25 @@ public class ArqueoCajaService {
         return (ArqueoCaja) Arqueorepository.findFirstByEstado(EstadoCrud.Habilitado);
     }
 
-    public String CloseArqueo(ArqueoCaja arqueo, Long id) {
-        try {
-            ArqueoCaja arqueoCaja = Arqueorepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Este Arqueo no está registrado " + arqueo.getId()));
-            arqueoCaja.setEstado(EstadoCrud.Deshabilitado);
-            arqueoCaja.setFechaCierre(arqueo.getFechaCierre());
-            arqueoCaja.setObservacion(arqueo.getObservacion());
-            arqueoCaja.setSaldoReal(arqueo.getSaldoReal());
-            arqueoCaja.CalcularDiferencia();
-            Arqueorepository.save(arqueoCaja);
-            return "Arqueo cerrado correctamente";
-        } catch (Exception e) {
-            return "Error al cerrar arqueo  :" + e.getMessage();
-        }
-
+public ResponseEntity<Map<String, String>> CloseArqueo(ArqueoCaja arqueo, Long id) {
+    Map<String, String> response = new HashMap<>();
+    try {
+        ArqueoCaja arqueoCaja = Arqueorepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Este Arqueo no está registrado " + arqueo.getId()));
+        arqueoCaja.setEstado(EstadoCrud.Deshabilitado);
+        arqueoCaja.setFechaCierre(arqueo.getFechaCierre());
+        arqueoCaja.setObservacion(arqueo.getObservacion());
+        arqueoCaja.setSaldoReal(arqueo.getSaldoReal());
+        arqueoCaja.CalcularDiferencia();
+        Arqueorepository.save(arqueoCaja);
+        response.put("message", "Arqueo cerrado correctamente");
+        return ResponseEntity.ok(response);
+    } catch (Exception e) {
+        response.put("error", "Error al cerrar arqueo: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+}
+
 
     public ArqueoCaja GetById(Long id) throws Exception {
         return Arqueorepository.findById(id)

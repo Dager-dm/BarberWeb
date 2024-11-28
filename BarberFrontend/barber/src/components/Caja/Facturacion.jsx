@@ -115,7 +115,7 @@ const Facturacion = () => {
   };
 
   return (
-    <div className="min-h-[70vh] bg-gray-100 p-3">
+    <div className="min-h-[70vh] bg-white-100 p-3">
       <div className="flex gap-3 h-[calc(100vh-5rem)] max-h-[68vh]">
         <div className="w-[70%] h-full">
           <ServiceList 

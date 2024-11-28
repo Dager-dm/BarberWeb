@@ -4,6 +4,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.company.barber.entity.ArqueoCaja;
 import com.company.barber.service.ArqueoCajaService;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +46,7 @@ public class ArqueoCajaController {
     }
 
     @PutMapping("/close/{id}")
-    public String CloseArqueo(@PathVariable("id") Long id, @RequestBody ArqueoCaja Arqueocaja) {
+    public ResponseEntity<Map<String, String>> CloseArqueo(@PathVariable("id") Long id, @RequestBody ArqueoCaja Arqueocaja) {
         return arqueoservice.CloseArqueo(Arqueocaja, id);
     }
 }
