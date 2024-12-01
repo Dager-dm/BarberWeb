@@ -13,6 +13,7 @@ import com.company.barber.entity.ArqueoCaja;
 import com.company.barber.entity.Corte;
 import com.company.barber.entity.Egreso;
 import com.company.barber.entity.EstadoCrud;
+import com.company.barber.entity.FormaPago;
 import com.company.barber.entity.Ingreso;
 import com.company.barber.repository.ArqueoCajaRepository;
 
@@ -65,6 +66,7 @@ public ResponseEntity<Map<String, String>> CloseArqueo(ArqueoCaja arqueo, Long i
         if (updatedEntity.getCortes() != null) {
             SetearCortes(arqueoCaja, updatedEntity.getCortes());
             arqueoCaja.CalcularIngresos();
+            
         }
         if (updatedEntity.getEgresos() != null) {
             SetearEgresos(arqueoCaja, updatedEntity.getEgresos());
@@ -75,7 +77,7 @@ public ResponseEntity<Map<String, String>> CloseArqueo(ArqueoCaja arqueo, Long i
             arqueoCaja.CalcularIngresos();
         }
     
-        arqueoCaja.CalcularSaldoPrevisto();
+        //arqueoCaja.CalcularSaldoPrevisto();
         return Arqueorepository.save(arqueoCaja);
     }
     
@@ -85,6 +87,9 @@ public ResponseEntity<Map<String, String>> CloseArqueo(ArqueoCaja arqueo, Long i
         for (Corte c : lst) {
             c.setArqueocaja(arqueo); // Establece la relación del lado hijo
             arqueo.getCortes().add(c); // Agrega a la lista del padre
+            if (c.getFormapago()==FormaPago.Efectivo) {
+                arqueo.Setingreso(c.getValor());
+            }
         }
     }
     
@@ -93,6 +98,7 @@ public ResponseEntity<Map<String, String>> CloseArqueo(ArqueoCaja arqueo, Long i
         for (Ingreso i : lst) {
             i.setArqueocaja(arqueo);
             arqueo.getIngresos().add(i);
+            arqueo.Setingreso(i.getValor());
         }
     }
     
@@ -101,6 +107,7 @@ public ResponseEntity<Map<String, String>> CloseArqueo(ArqueoCaja arqueo, Long i
         for (Egreso e : lst) {
             e.setArqueocaja(arqueo);
             arqueo.getEgresos().add(e);
+            arqueo.Setegreso(e.getValor());
         }
     }
 

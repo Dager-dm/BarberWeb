@@ -52,7 +52,7 @@ public class ArqueoCaja {
 
 
 
-    public void CalcularSaldoPrevisto(){
+    /*public void CalcularSaldoPrevisto(){
         System.out.println("dentro de la funcion");
             for (Corte corte : cortes) {
                 System.out.println(SaldoPrevisto);
@@ -71,7 +71,7 @@ public class ArqueoCaja {
                 SaldoPrevisto = SaldoPrevisto - e.getValor();
             }
 
-        }
+        }*/
 
 
     public void CalcularIngresos() {
@@ -95,5 +95,18 @@ public class ArqueoCaja {
     public void CalcularDiferencia() {
         Diferencia =  SaldoReal - SaldoPrevisto ;
     }
+
+
+    public void Setingreso(long valor){
+        SaldoPrevisto=SaldoPrevisto+valor;
+    }
+
+    public void Setegreso(long valor){
+        System.out.println("Saldo Previsto: "+SaldoPrevisto);
+        System.out.println("valor" +valor);
+        SaldoPrevisto= SaldoPrevisto - valor;
+    }
+
+    
 
 }
